@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>JS85EMU Web Page</title>
+<meta charset="UTF-8">
+
+<!-- CPU stuff -->
+<script src="./cpu/cpu_common.js" type="text/javascript" encoding="UTF-8"></script>
+<script src="./cpu/cpu_definitions.js" type="text/javascript" encoding="UTF-8"></script>
+<script src="./cpu/cpu_interrupts.js" type="text/javascript" encoding="UTF-8"></script>
+<script src="./cpu/cpu_exec_branches.js" type="text/javascript" encoding="UTF-8"></script>
+<script src="./cpu/cpu_exec_jumps.js" type="text/javascript" encoding="UTF-8"></script>
+<script src="./cpu/cpu_exec_doubleops.js" type="text/javascript" encoding="UTF-8"></script>
+<script src="./cpu/cpu_exec_singleops.js" type="text/javascript" encoding="UTF-8"></script>
+<script src="./cpu/cpu_exec_onehalfops.js" type="text/javascript" encoding="UTF-8"></script>
+<script src="./cpu/cpu_exec_misc.js" type="text/javascript" encoding="UTF-8"></script>
+<script src="./cpu/cpu_exec_condcode.js" type="text/javascript" encoding="UTF-8"></script>
+<script src="./cpu/cpu_addressing.js" type="text/javascript" encoding="UTF-8"></script>
+<script src="./cpu/cpu_flags.js" type="text/javascript" encoding="UTF-8"></script>
+<script src="./cpu/cpu_decoder.js" type="text/javascript" encoding="UTF-8"></script>
+
+<!-- stylesheet -->
+<link rel="stylesheet" type="text/css" href="./style.css">
+
+<!-- LCD stuff -->
+<script src="./svg/lcd_segments.js" type="text/javascript" encoding="UTF-8"></script>
+<script src="./svg/svg_display.js" type="text/javascript" encoding="UTF-8"></script>
+<!-- GUI stuff -->
+<script src="./svg/gui.js" type="text/javascript" encoding="UTF-8"></script>
+<script src="./svg/gui_events.js" type="text/javascript" encoding="UTF-8"></script>
+<!-- GUI keys definition -->
+<script src="./svg/keys_data.js" type="text/javascript" encoding="UTF-8"></script>
+<!-- just some 'glue' -->
+<script src="./helper_functions.js" type="text/javascript" encoding="UTF-8"></script>
+<!-- options panel -->
+<script src="./options_panel.js" type="text/javascript" encoding="UTF-8"></script>
+<!-- encoded ROM file -->
+<script src="./rom_file.js" type="text/javascript" encoding="UTF-8"></script>
+<!-- the gist of things -->
+<script src="./main.js" type="text/javascript" encoding="UTF-8"></script>
+</head>
+<body>
+
+<h1>JS85EMU - Elektronika MK85 JavaScript emulator!</h1>
+
+<div id="mk85"></div>
+<br>
+<br>
+<div id="mk85_panel"></div>
+
+<br><hr>
+<b>2024 © Compys S&N Systems<br><br>
+
+Based on <a href="https://github.com/KP1533TM2/js-mk85">js-mk85</a><br>
+2016 © Alexei Gordeev a.k.a. KP1533TM2<br><br>
+
+MK85 Materials<br>
+2006-2021 © Piotr Piatek a.k.a. piotr433</b>
+
+</body>
+</html> 
