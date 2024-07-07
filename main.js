@@ -16,7 +16,7 @@ window.onload = function() {
 	}
 };
 
-var VERVAR = "1.0 - build 06.07.2024"
+var VERVAR = "1.01 - build 07.07.2024"
 
 var supportsVibrate = "vibrate" in navigator;
 
@@ -96,13 +96,15 @@ startEmu();
 
 document.addEventListener("visibilitychange", () => {
 	if (document.hidden) {
-		panelSwState(true);
+		if (POWER) {
+			panelSwState(true);
+		}
 		// Store RAM in local storage
 		window.localStorage.setItem('mk_ram', btoa(String.fromCharCode.apply(null, RAM)));
 		window.localStorage.setItem('mk_overlay', document.getElementById("lay").checked);
 		window.localStorage.setItem('mk_autoinit', document.getElementById("aini").checked);
 	}
-	else{
+	else if (POWER){
 		panelSwState(false);
 	}
 });
