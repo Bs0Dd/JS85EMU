@@ -29,3 +29,28 @@
    padding-top: 10px;
    padding-bottom: 10px;
 }
+
+#mk85_ch96 {
+   width : 760px;
+}
+
+#mk85_ch96_int {
+   width : 360px;
+   border : 1px solid black;
+   background-color : gainsboro;
+   padding-top: 10px;
+   padding-bottom: 10px;
+   margin-left: auto;
+   margin-right: auto;
+}
+
+#c96_pixels td {
+   border: black 1px solid;
+   width: 20px;
+   height: 20px;
+   background-color: white;
+}
+   
+#c96_panel td, #c96_panel2 td {
+   padding : 5px;
+}

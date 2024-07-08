@@ -49,7 +49,8 @@ function PANEL() {
     ROM file: <span id="rofi"></span><br><button onClick="panelResetRoF()">Reset ROM</button><br>
     <button onClick="panelLoadRoF()">Load ROM from file</button>: <input type="file" id="romf" name="romf" accept=".bin">`;
 
-    tabcont[2][0] = `<button onClick="panelOpenLay()">Keyboard layout</button> <button onClick="panelOpenDbg()">Debugger</button>
+    tabcont[2][0] = `<button onClick="panelOpenLay()">Keyboard layout</button> <button onClick="panelOpenCTool()">CHR96 code tool</button><br>
+    <button onClick="panelOpenDbg()">Debugger</button>
     <button onClick="panelOpenHelp()">Help</button> <button onClick="panelOpenInfo()">About</button><br>
     <label for="iturb">Force turbo (ign. bit 3 in cpuctrl):</label> <input type="checkbox" onChange="panelSwTurIg()" id="iturb" name="iturb" ${forc}><br>
     <label for="ifrdiv">Ignore frq. div. bit (11 in cpuctrl):</label> <input type="checkbox" onChange="panelSwDivIg()" id="ifrdiv" name="ifrdiv" ${ign}><br>
@@ -115,13 +116,19 @@ function PANEL() {
     return pnl;
 }
 
+function panelOpenCTool() {
+    const hidp = document.getElementById("mk85_ch96_int");
+    hidp.style.display = (hidp.style.display == "none") ? "" : "none";
+    document.getElementById("mk85_ch96_br").style.display = hidp.style.display;
+}
+
 function panelOpenHelp() {
-    window.open(`${BASEPATH}/help.html`,'targetWindow', `toolbar=no, location=no, status=no, menubar=no,
+    window.open(`${BASEPATH}/help.html`,'85_helpWindow', `toolbar=no, location=no, status=no, menubar=no,
         scrollbars=no, resizable=no, width=820, height=340`)
 }
 
 function panelOpenDbg() {
-    window.open(`${BASEPATH}/debug.html`,'targetWindow', `toolbar=no, location=no, status=no, menubar=no,
+    window.open(`${BASEPATH}/debug.html`,'85_debugWindow', `toolbar=no, location=no, status=no, menubar=no,
         scrollbars=no, resizable=no, width=820, height=340`)
 }
 
@@ -233,12 +240,12 @@ function panelSetTRB(){
 }
 
 function panelOpenInfo() {
-    window.open(`${BASEPATH}/about.html`,'targetWindow', `toolbar=no, location=no, status=no, menubar=no,
+    window.open(`${BASEPATH}/about.html`,'85_aboutWindow', `toolbar=no, location=no, status=no, menubar=no,
         scrollbars=no, resizable=no, width=820, height=570`)
 }
 
 function panelOpenLay() {
-    window.open(`${BASEPATH}/layout.html`,'targetWindow', `toolbar=no, location=no, status=no, menubar=no,
+    window.open(`${BASEPATH}/layout.html`,'85_layoutWindow', `toolbar=no, location=no, status=no, menubar=no,
         scrollbars=no, resizable=no, width=820, height=340`)
 }
 
@@ -497,6 +504,10 @@ function panelUpdate(){
 
     if (((MK85CPU.cpuctrl&0x0800)==0) && !MK85CPU.ignoreFreqDiv) {
         document.getElementById("speedstat").innerText+= " (8x slowed by freq. divider)"
+    }
+
+    if ((MK85CPU.cpuctrl&0x0400)==0) {
+        document.getElementById("speedstat").innerText+= " (clock stopped)"
     }
 
     //console.log((MK85CPU.cpuctrl).toString(2));

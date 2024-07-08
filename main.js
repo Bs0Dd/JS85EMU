@@ -9,6 +9,7 @@
 window.onload = function() {
 	document.getElementById("mk85").appendChild(GUI);
 	document.getElementById("mk85_panel").appendChild(PAN);
+	document.getElementById("mk85_ch96").appendChild(CH96P);
 	PAN.panelStart();
 
 	if (window.localStorage.getItem('mk_overlay') == "true"){
@@ -16,7 +17,7 @@ window.onload = function() {
 	}
 };
 
-var VERVAR = "1.01 - build 07.07.2024"
+var VERVAR = "1.02 - build 09.07.2024"
 
 var supportsVibrate = "vibrate" in navigator;
 
@@ -37,6 +38,8 @@ var GUI = composeGUI();
 
 var LCD = new MK85_SVG_LCD();
 var LCD_ANIMSPEED = 10;
+
+var CH96P = new C96TOOL();
 
 var SPEED_NORMAL = loadProperty('mk_normspeed', 250, false);
 var SPEED_TURBO = loadProperty('mk_turbospeed', 1200, false);
