@@ -121,7 +121,7 @@ function C96TOOL() {
         for (i=0; i<code.value.length; i++) {
             setTimeout(autoPressKey, 200*c, code.value, i);
             setTimeout(autoUnPressKey, 100+(200*c), code.value, i);
-            console.log(200*c, 100+(200*c));
+            //console.log(200*c, 100+(200*c));
             c++;
         }
 
@@ -141,7 +141,7 @@ function C96TOOL() {
     const td23 = document.createElement("td");
 
     const lbl = document.createElement("label");
-    lbl.for = "chkb";
+    lbl.htmlFor = "chkb";
     lbl.innerText = "in quotes"
     td23.appendChild(lbl);
 
@@ -167,8 +167,16 @@ function C96TOOL() {
 }
 
 function kpress(event) {
+    if (event.cancelable) event.preventDefault();
+
     var CODESTR = document.getElementById("code");
     var c96p = document.getElementById("mk85_ch96_int");
+
+    if (c96p.lastCancel == false && event.type == "mousedown") {
+        return; // Sometimes when touchstart event is non cancelable, mousedown event appears (idk why)
+    }
+
+    c96p.lastCancel = event.cancelable;
 
     const sbyte = (event.currentTarget.style.backgroundColor == "");
 
