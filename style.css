@@ -11,23 +11,30 @@
    user-select: none;
 }
 
-#mk85_panel {
+#mk85_panel, #mk85_dbg{
    width : 760px;
    background-color : gainsboro;
 }
 
 
-#mk85_panel_int {
+#mk85_panel_int, #mk85_dbg_int{
    border: 1px solid black;
    width : 100%;
    height : 100%;
 }
 
-#mk85_panel_int > tr > td {
+#mk85_panel_int > tr > td{
    border: 1px solid black;
    padding-left: 10px;
    padding-top: 10px;
    padding-bottom: 10px;
+}
+
+#mk85_dbg_int > tr > td{
+   border: 1px solid black;
+/*   padding-left: 10px;
+   padding-top: 10px;
+   padding-bottom: 10px;*/
 }
 
 #mk85_ch96 {
@@ -49,6 +56,11 @@
    width: 20px;
    height: 20px;
    background-color: white;
+}
+
+#dbg_actions td {
+  padding : 5px 10px 5px 10px;
+  border : 1px solid black;
 }
    
 #c96_panel td, #c96_panel2 td {

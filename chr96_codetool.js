@@ -1,3 +1,8 @@
+// CHR96 code tool module
+// Allows to encode pixel data for special string for character 96 and decode it back
+
+// 2024 (c) Bs0Dd
+
 function C96TOOL() {
     const c96p = document.createElement("div");
     c96p.id = "mk85_ch96_int";
@@ -15,9 +20,9 @@ function C96TOOL() {
 
     c96p.cells = [[], [], [], [], [], [], []];
 
-    for (i=0; i < 7; i++){
+    for (let i=0; i < 7; i++){
         const row = document.createElement("tr");
-            for (c=4; c >= 0; c--) {
+            for (let c=4; c >= 0; c--) {
                 const td = document.createElement("td");
                 td.id = `ct${i}-${c}`;
 
@@ -118,7 +123,7 @@ function C96TOOL() {
             c+=2;
         }
 
-        for (i=0; i<code.value.length; i++) {
+        for (let i=0; i<code.value.length; i++) {
             setTimeout(autoPressKey, 200*c, code.value, i);
             setTimeout(autoUnPressKey, 100+(200*c), code.value, i);
             //console.log(200*c, 100+(200*c));
@@ -189,7 +194,7 @@ function kpress(event) {
 
     c96p.ignoreUpd = true;
 
-    for (i = 0; CODESTR.value.length <= row; i++) {
+    for (let i = 0; CODESTR.value.length <= row; i++) {
         CODESTR.value += "0";
     }
 
@@ -215,7 +220,7 @@ function updText(obj) {
     obj.CODESTR.value = obj.CODESTR.value.toUpperCase();
     obj.CODESTR.setSelectionRange(stt, stt);
 
-    for (i = 0; i < obj.CODESTR.value.length; i++) {
+    for (let i = 0; i < obj.CODESTR.value.length; i++) {
         var ch = obj.CODESTR.value.charCodeAt(i);
         if (!(((ch >= 48) && (ch <= 57)) || ((ch >= 65) && (ch <= 86)))) {
             obj.CODESTR.value = obj.CODESTR.value.substring(0, i) + obj.CODESTR.value.substring(i + 1);
@@ -224,11 +229,11 @@ function updText(obj) {
         }
     }
 
-    for (i = 0; i < 7; i++) {
+    for (let i = 0; i < 7; i++) {
         var snum = (i < obj.CODESTR.value.length) ? (obj.CODESTR.value.charCodeAt(i)-48) : 0;
         if (snum >= 17) {snum -= 7;}
 
-        for (c = 0; c < 5; c++) {
+        for (let c = 0; c < 5; c++) {
             obj.cells[i][c].style.backgroundColor = (((snum >> (4-c)) & 1) == 1) ? "black" : "";
         }
     }

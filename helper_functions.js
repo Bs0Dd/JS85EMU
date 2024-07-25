@@ -22,7 +22,7 @@ function base64ToArrayBuffer(base64) {
     var binary_string =  window.atob(base64);
     var len = binary_string.length;
     var bytes = new Uint8Array( len );
-    for (var i = 0; i < len; i++)        {
+    for (let i = 0; i < len; i++)        {
         bytes[i] = binary_string.charCodeAt(i);
     }
     return bytes.buffer;
@@ -44,20 +44,43 @@ function devicePower() {
 		PAN.panelStop();
 		LCD.stopAnimating();
 		LCD.clearScreen();
+		DBG.debugStop();
 		document.getElementById("stst").innerText = "Pause";
+		document.getElementById("dstst").innerText = "Pause";
+
+		document.getElementById("dbst").disabled = POWER;
+		document.getElementById("dbsts").disabled = POWER;
+		document.getElementById("dbbr").disabled = POWER;
+		document.getElementById("regist").disabled = POWER;
+        document.getElementById("reged").disabled = POWER;
+        document.getElementById("edreg").disabled = POWER;
+		
 		stopped = false;
 	}
 	else {
 		MK85CPU = new CPU();
 		startEmu();
 		PAN.panelStart();
+		DBG.debugStart();
 	}
 
 	document.getElementById("swi").setAttributeNS(null, "opacity", POWER ? 1 : 0);
 	document.getElementById("stst").disabled = POWER;
 	document.getElementById("rst").disabled = POWER;
+	document.getElementById("dstst").disabled = POWER;
+	document.getElementById("drst").disabled = POWER;
 	document.getElementById("cspm").disabled = POWER;
 	document.getElementById("rstm").disabled = POWER;
+
+	document.getElementById("disu").disabled = !POWER;
+	document.getElementById("dispu").disabled = !POWER;
+	document.getElementById("disgo").disabled = !POWER;
+	document.getElementById("disgob").disabled = !POWER;
+	document.getElementById("dispd").disabled = !POWER;
+	document.getElementById("disd").disabled = !POWER;
+	document.getElementById("disr").disabled = !POWER;
+	document.getElementById("dised").disabled = !POWER;
+	document.getElementById("diss").disabled = !POWER;
 	
 	POWER = !POWER;
 }
@@ -75,8 +98,31 @@ function startEmu() {
 		for(var steps = 0; steps < MK85CPU.steps; steps++)
 		{
 
+			if(uniquesPressed.indexOf("stop")!=-1) {
+				return; // looks like real MK stays "frozen" until STOP button will not be released
+			}
+
 			MK85CPU.step();
-			MK85CPU.steps = (((MK85CPU.cpuctrl&0x0008)==0) && !MK85CPU.forceTurbo) ? SPEED_NORMAL : SPEED_TURBO;
+
+			if (BREAKPOINT<0) {
+				panelSwState();
+				BREAKPOINT = false;
+				return;
+			}
+
+			if(((MK85CPU.cpuctrl&0x1000)!=0) && !MK85CPU.ignorePowerOff) {
+				console.log("Device was turned off by firmware (bit 12 in cpuctrl was set)!");
+				devicePower();
+				setTimeout(LCD.clearScreen.bind(LCD), 100); //clear screen after last update
+				return;
+			}
+
+			if (typeof DEBUG_STEPS == "number") {
+				MK85CPU.steps = DEBUG_STEPS;
+			} else {
+				MK85CPU.steps = (((MK85CPU.cpuctrl&0x0008)==0) && !MK85CPU.forceTurbo) ? SPEED_NORMAL : SPEED_TURBO;
+			}
+			
 /*			if(MK85CPU.reg_u16[7] == 0x00f4) {
 				console.log("HALT INTERRUPT");
 				DEBUG = true;
@@ -94,14 +140,25 @@ var PP = 0;	// CPU parallel port for now
 function glueCPU() {
 	if (RAM.length > 32768) {  // 32KB max size
 		RAM = RAM.subarray(0, 32768);
-		console.log("Maximum memory size is 32KB, memory area reduced");
+		console.log("Maximum RAM memory size is 32KB, memory area reduced");
 	}
-	// if (RAM.length % 2048 != 0) {  // MK85 firmware expects a RAM multiple of 2KB 
-	// 	var nRAM = new Uint8Array((Math.floor(RAM.length / 2048)+1)*2048);
-	// 	nRAM.set(RAM);
-	// 	RAM = nRAM;
-	// 	console.log(`The RAM size must be a multiple of 2KB, increasing the area to ${RAM.length / 1024}KB.`);
-	// }
+	else if (RAM.length % 2048 != 0) {  // Real processor uses a RAM chips multiple of 2KB min
+		var nRAM = new Uint8Array((Math.floor(RAM.length / 2048)+1)*2048);
+		nRAM.set(RAM);
+		RAM = nRAM;
+		console.log(`The RAM size must be a multiple of 2KB, increasing the area to ${RAM.length / 1024}KB.`);
+	}
+
+	if (ROM.length > 32768) {  // 32KB max size
+		ROM = ROM.subarray(0, 32768);
+		console.log("Maximum ROM memory size is 32KB, memory area reduced");
+	}
+	else if (ROM.length % 8192 != 0) {  // Real processor uses a RAM chips multiple of 8KB min
+		var nROM = new Uint8Array((Math.floor(ROM.length / 8192)+1)*8192);
+		nROM.set(ROM);
+		ROM = nROM;
+		console.log(`The ROM size must be a multiple of 8KB, increasing the area to ${RAM.length / 1024}KB.`);
+	}
 	
 	var ramLastAddr = 0x8000+RAM.length;
 	

@@ -37,7 +37,7 @@ CPU.prototype.execSTEP = function(code) {
 
 CPU.prototype.execRTI = function(code) {
 	var SP1 = this.addressingIP(0x16, false);
-	this.reg_u16[7] = SP1.ru();
+	this.reg_u16[7] = SP1.ru() & 0xFFFE;
 	//this.reg_u16[6] += 2;
 	var SP2 = this.addressingIP(0x16, false);
 	this.psw = SP2.ru();
@@ -59,13 +59,9 @@ CPU.prototype.execRESET = function(code) {
 	return CPU.prototype.execCode;
 };
 
-CPU.prototype.execBPT = function(code) {
-	throw this.vectors.TRAP_T_BIT
-};
-
 CPU.prototype.execRTT = function(code) {
 	this.flag_rtt = true
-	return CPU.prototype.execRTI;
+	return CPU.prototype.execRTI(code);
 };
 
 CPU.prototype.execRSEL = function(code) {

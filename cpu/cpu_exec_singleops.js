@@ -125,3 +125,45 @@ CPU.prototype.execSWAB = function(code) {
 	this.checkBitNZ(this.sp_s8[1]);
 	return CPU.prototype.execCode;
 };
+
+
+CPU.prototype.execMTPS = function(code) {
+	var src = this.addressingIP(code&0x3f, true);
+	this.psw = (this.psw & 0xFF10) | (src.ru() & 0x00EF); // T bit left unchanged
+	return CPU.prototype.execCode;
+}
+
+CPU.prototype.execMFPS = function(code) {	
+	var isByte = (code&0x8000)==0x8000;
+	/* if destination is a register, then sign-extend it */
+	var dst = this.addressingIP(code&0x3f, ((code&0x38)==0)?false:isByte);
+	
+	var x = this.psw&0xff;
+
+	dst.w(x);
+	this.psw &= ~this.flags.V;
+	this.checkBitNZ(x);
+	return CPU.prototype.execCode;
+}
+
+CPU.prototype.execSXT = function(code) {
+	var dst = this.addressingIP(code&0x3F, false);
+	if ((this.psw&this.flags.N) == 0) {
+		dst.w(0);
+		this.psw |= this.flags.Z;
+	}
+	else {
+		dst.w(0xFFFF);
+		this.psw &= ~this.flags.Z;
+	}
+	this.psw &= ~this.flags.V;
+	return CPU.prototype.execCode;
+}
+
+CPU.prototype.execMARK = function(code) {
+	this.reg_u16[6] = this.reg_u16[7] + ((code << 1) & 0x7E);
+	this.reg_u16[7] = this.reg_u16[5] & 0xFFFE;
+	var src = this.addressingIP(0x16, false);
+	this.reg_u16[5] = src.ru();
+	return CPU.prototype.execCode;
+}

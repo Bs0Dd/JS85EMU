@@ -17,11 +17,11 @@ function keysRead(rows) {
 	var k = ((typeof lastElem != 'undefined')&&(lastElem in keyTable))?keyTable[lastElem]:keyTable["nokey"];
 
 	var cols = ((rows&2)?k[0]:0)|((rows&4)?k[1]:0)|((rows&8)?k[2]:0);
-	if((rows&2)&&(lastElem=="stop")) 
-	{
-		MK85CPU.flag_halt = true;
-		console.log("HALT");
-	}
+	// if((rows&2)&&(lastElem=="stop")) 
+	// {
+	// 	MK85CPU.flag_halt = true;
+	// 	console.log("HALT");
+	// }
 	
 	return cols;
 }

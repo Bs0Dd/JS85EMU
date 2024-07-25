@@ -50,7 +50,7 @@ function MK85_SVG_LCD() {
 
 	this.characters = [];
 /* create 12 character places */
-	for (var x = 0; x < 12; x++)
+	for (let x = 0; x < 12; x++)
 		this.characters.push(createDotMatrix(this.svg,7,5,x_offset+x*((2.8)*7),y_offset,2,3,1,1,segmentOn,segmentOff));
 
 /* array to sort out extra mappings */
@@ -69,7 +69,7 @@ function MK85_SVG_LCD() {
 
 /* create 7Seg digits */
 
-	for (var x = 0; x < sevenSegsMapping.length; x++) {
+	for (let x = 0; x < sevenSegsMapping.length; x++) {
 		// create seven-segment digit and get array of functions to access its segments
 
 		var digit = create7SegDisplay(this.svg, 152.3+(x*14), 3);
@@ -87,8 +87,8 @@ function MK85_SVG_LCD() {
 	// create LCD memory mapping for addresses
 	this.mapping = Array.apply(null, Array(videoMemorySize));
 
-	for (var x = 0; x<this.characters.length; x++) {
-		for (var y = 0; y<this.characters[x].length; y++) {
+	for (let x = 0; x<this.characters.length; x++) {
+		for (let y = 0; y<this.characters[x].length; y++) {
 			this.mapping[(x<<3)+y+1] = this.characters[x][y];
 		}
 	}

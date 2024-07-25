@@ -10,14 +10,18 @@ window.onload = function() {
 	document.getElementById("mk85").appendChild(GUI);
 	document.getElementById("mk85_panel").appendChild(PAN);
 	document.getElementById("mk85_ch96").appendChild(CH96P);
+	document.getElementById("mk85_dbg").appendChild(DBG);
 	PAN.panelStart();
+	//DBG.debugStart();
 
 	if (window.localStorage.getItem('mk_overlay') == "true"){
 		panelSwOverlay();
 	}
+
+	document.getElementById("mktype").setAttributeNS(null, "opacity", (RAM.length > 2048 ? 0 : 1));
 };
 
-var VERVAR = "1.02 - build 09.07.2024"
+var VERVAR = "1.4 - build 25.07.2024"
 
 var supportsVibrate = "vibrate" in navigator;
 
@@ -40,11 +44,16 @@ var LCD = new MK85_SVG_LCD();
 var LCD_ANIMSPEED = 10;
 
 var CH96P = new C96TOOL();
+var DBG = new DBGTOOL();
 
 var SPEED_NORMAL = loadProperty('mk_normspeed', 250, false);
 var SPEED_TURBO = loadProperty('mk_turbospeed', 1200, false);
 
+var DEBUG_STEPS = false;
+var BREAKPOINT = false;
+
 var ignoreFreqDiv = loadProperty('mk_ignorediv', false, true);
+var ignorePowerOff = loadProperty('mk_ignorepoff', false, true);
 var forceTurbo = loadProperty('mk_forceturbo', false, true);
 
 var DEBUG = loadProperty('mk_debugmsg', false, true);
@@ -59,6 +68,7 @@ var RAM = null;
 var ROM = null;
 
 var POWER = true;
+var PAUSE_ON_HID = false;
 
 // Load RAM and ROM contents
 
@@ -87,7 +97,7 @@ if(rom == null) {
 	console.log("Loading internal ROM memory file");
 	romname = "internal";
 
-	ROM = ROM_int; // Internal ROM image constant
+	ROM = new Uint8Array(ROM_int); // Internal ROM image constant
 } else {
 	console.log("Getting ROM contents from local storage");
 
@@ -100,6 +110,7 @@ startEmu();
 document.addEventListener("visibilitychange", () => {
 	if (document.hidden) {
 		if (POWER) {
+			PAUSE_ON_HID = stopped;
 			panelSwState(true);
 		}
 		// Store RAM in local storage
@@ -107,7 +118,7 @@ document.addEventListener("visibilitychange", () => {
 		window.localStorage.setItem('mk_overlay', document.getElementById("lay").checked);
 		window.localStorage.setItem('mk_autoinit', document.getElementById("aini").checked);
 	}
-	else if (POWER){
+	else if (POWER && !PAUSE_ON_HID){
 		panelSwState(false);
 	}
 });

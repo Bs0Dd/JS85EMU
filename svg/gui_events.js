@@ -4,9 +4,9 @@ window.addEventListener('keydown', KBKeyPress, true);
 window.addEventListener('keyup', KBKeyRelease, true);
 
 function keyByCode(keyCode) {
-	for (var key in keyboardMapping)
+	for (let key in keyboardMapping)
 		if(keyboardMapping[key] === keyCode) return key
-	for (var key in numpadKeyboardMapping)
+	for (let key in numpadKeyboardMapping)
 		if(numpadKeyboardMapping[key] === keyCode) return key
 	return undefined;
 }
@@ -30,7 +30,7 @@ function KBKeyPress(evt) {
 
 	// find the key in mapping
 	if((uniquesPressed.indexOf(key) == -1)&&(uniquesPressed.length < 2)) {
-		if(key=="stop") MK85CPU.flag_halt = true;
+		if((key=="stop")&&(!MK85CPU.flag_halt)) MK85CPU.flag_halt = true;
 		uniquesPressed.push(key);
 		console.log("Pressed", key, uniquesPressed);
 	}

@@ -1,3 +1,9 @@
+// Options panel module
+// Panel with standard functions to configure emulator
+// (change RAM size, load ROM/RAM from files, save RAM to disk, change speed parameters and etc.)
+
+// 2024 (c) Bs0Dd
+
 var stopped = false;
 
 var realConsoleLog = console.log;
@@ -14,10 +20,25 @@ function PANEL() {
 
     pnl.appendChild(dwram);
 
+    var dwvar = document.createElement('a');
+    dwvar.id = "dwvar";
+    dwvar.style.display = "none";
+    dwvar.download = "mk85_vars.txt";
+
+    pnl.appendChild(dwvar);
+
+    var dwbas = document.createElement('a');
+    dwbas.id = "dwbas";
+    dwbas.style.display = "none";
+    dwbas.download = "mk85_programs.txt";
+
+    pnl.appendChild(dwbas);
+
     var ovl = (loadProperty('mk_overlay', false, true)) ? "checked" : "";
     var init = (loadProperty('mk_autoinit', true, true)) ? "checked" : "";
 
     var ign = ignoreFreqDiv ? "checked" : "";
+    var ignp = ignorePowerOff ? "checked" : "";
     var forc = forceTurbo ? "checked" : "";
 
     var dbgm = DEBUG ? "checked" : "";
@@ -44,8 +65,10 @@ function PANEL() {
             <label for="aini">Auto init:</label> <input type="checkbox" id="aini" name="aini" ${init}><br><br>
             2KB - Standard MK85<br>6KB - Extended MK85M<br>32KB - Maximal value`;
 
-    tabcont[1][1] = `RAM file: <span id="rfi"></span><br><button onClick="panelSaveRaF()">Save RAM</button><br>
-    <button onClick="panelLoadRaF()">Load RAM from file</button>: <input type="file" id="ramf" name="ramf" accept=".bin"><br><br>
+    tabcont[1][1] = `RAM file: <span id="rfi"></span><br><button onClick="panelSaveRaF()">Save RAM</button>
+    <button onClick="panelGetRLS()">Get vars list</button> <button onClick="panelGetBAS()">Get programs</button><br>
+    <button onClick="panelLoadRaF()">Load RAM from file</button>: <input type="file" id="ramf" name="ramf" accept=".bin"><br>
+    <button onClick="panelLoadBAS()">Load program from file</button>: <input type="file" id="pbasf" name="pbasf" accept=".txt, .bas"><br><br>
     ROM file: <span id="rofi"></span><br><button onClick="panelResetRoF()">Reset ROM</button><br>
     <button onClick="panelLoadRoF()">Load ROM from file</button>: <input type="file" id="romf" name="romf" accept=".bin">`;
 
@@ -54,6 +77,7 @@ function PANEL() {
     <button onClick="panelOpenHelp()">Help</button> <button onClick="panelOpenInfo()">About</button><br>
     <label for="iturb">Force turbo (ign. bit 3 in cpuctrl):</label> <input type="checkbox" onChange="panelSwTurIg()" id="iturb" name="iturb" ${forc}><br>
     <label for="ifrdiv">Ignore frq. div. bit (11 in cpuctrl):</label> <input type="checkbox" onChange="panelSwDivIg()" id="ifrdiv" name="ifrdiv" ${ign}><br>
+    <label for="ipoff">Disable soft poweroff (12 in cpuctrl):</label> <input type="checkbox" onChange="panelSwDivPo()" id="ipoff" name="ifrdiv" ${ignp}><br>
     <label for="dbgm">Show debug messages in console:</label> <input type="checkbox" onChange="panelSWDbgMsg()" id="dbgm" name="dbgm" ${dbgm}>`;
 
     tabcont[2][1] = `Speed: <span id="speedstat"></span><br>
@@ -65,11 +89,12 @@ function PANEL() {
     <button onClick="panelSetTurSP()">Set</button> <button onClick="panelResetTurSP()">Reset</button><br>
     <button id="cspm" onClick="panelChangeSP()">Change speed mode</button> <button id="rstm" onClick="panelSetTRB()">Restart in turbo mode</button>`;
 
-    for (i=0; i < 3; i++){
+    for (let i=0; i < 3; i++){
         const row = document.createElement("tr");
-        for (c=0; c < 2; c++) {
+        for (let c=0; c < 2; c++) {
             const td = document.createElement("td");
             td.id = `cl${i}-${c}`;
+            //td.style.lineHeight = "1.8";
 
             if (typeof tabcont[i][c] != "undefined") {
                 td.innerHTML = tabcont[i][c];
@@ -105,7 +130,7 @@ function PANEL() {
         Allocated variables: <span id=\"avr\"> ( bytes)</span>`;
         panelUpdate();
     
-        this.timer = setInterval(panelUpdate, 1000)
+        this.timer = setInterval(panelUpdate, 1000);
     }
 
     pnl.panelStop = function(){
@@ -116,6 +141,344 @@ function PANEL() {
     return pnl;
 }
 
+function panelLoadBAS() {
+    const pbasf = document.getElementById("pbasf").files[0];
+
+    if (typeof pbasf == "undefined") {
+        return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = function() {
+        function powerdev(msg) {
+            var finmsg = `${msg}\n\nProcessed ${processed} program${(processed != 1) ? "s" : ""}.`;
+
+            if (stored.length > 0) {
+                finmsg+=`\nStored at number${(stored.length != 1) ? "s" : ""}: `+stored.join(", ")+".";
+            }
+
+            alert(finmsg);
+
+            RAM = TRAM;
+            window.localStorage.setItem('mk_ram', btoa(String.fromCharCode.apply(null, RAM)));
+
+            if (POWER) {
+                MK85CPU = new CPU();
+                startEmu();
+                panelUpdate();
+                if (document.getElementById("mk85_dbg_int").style.display == "") {
+                    debugUpdate();
+                }
+            }
+        }
+
+        if (POWER) {
+            LCD.stopAnimating();
+            LCD.clearScreen();
+            if (stopped) {
+                panelUnStop();
+            }
+        }
+
+        var TRAM = new Uint8Array(RAM);
+        var LINES = (new TextDecoder()).decode(reader.result).split('\n');
+        var strnum = 1;
+        var processed = 0;
+        var stored = [];
+
+        do {
+            var PRGBUF = new Uint8Array(RAM.length);
+            var PRGPTR = 0;
+            var np = 0;
+            var pnum = -1;
+            var tstart = 0x22C;
+
+            while (LINES.length > 0) {
+                var chkl = LINES[0].trim();
+                if (pnum == -1) {
+                    var pospnum = chkl.toLowerCase().indexOf("program ")
+                    
+                    if (pospnum != -1) {
+                        pnum = Number(chkl[pospnum+8]);
+
+                        if (isNaN(pnum)) {
+                            powerdev(`Failed to parse program number at line ${strnum}!`);
+                            return;
+                        }
+                    }
+                }
+
+                if (!isNaN(Number(chkl[0]))) {
+                    break;
+                }
+                
+                strnum++;
+                LINES.shift();
+            }
+
+            var preend = 0x826B;
+            if (pnum == -1) {
+                for (let i=0; i<10; i++) {
+                    var tend = (((TRAM[tstart+(i*2)+1] & 0xFF) << 8) | (TRAM[tstart+(i*2)] & 0xFF));
+                    if (preend == tend) {
+                        pnum = i;
+                        break;
+                    }
+                    preend = tend;
+                }
+                if (pnum == -1) {
+                    powerdev(`There are no empty programs in memory, clear one of them!`);
+                    return;
+                }
+            }
+            else {
+                if (pnum > 0) {
+                    preend = (((TRAM[tstart+((pnum-1)*2)+1] & 0xFF) << 8) | (TRAM[tstart+((pnum-1)*2)] & 0xFF));
+                }
+                if (preend != (((TRAM[tstart+(pnum*2)+1] & 0xFF) << 8) | (TRAM[tstart+(pnum*2)] & 0xFF))) {
+                    powerdev(`Program ${pnum} already exists, clear it or specify another one!`);
+                    return;
+                }
+            }
+
+            while (LINES.length > 0) {
+                var trstr = LINES[0].trim();
+
+                if (trstr.length == 0) {
+                    np++;
+                    if (np == 2) {
+                        break;
+                    }
+                    continue;
+                }
+
+                var status = bas_parser(PRGBUF, PRGPTR, trstr);
+
+                if (typeof status[0] == "string") {
+                    powerdev(`Failed to convert code at line ${strnum}: `+status);
+                    return;
+                }
+                else {
+                    PRGPTR = status;
+                }
+
+                strnum++;
+                LINES.shift();
+            }
+
+            if (PRGPTR > 0) {
+
+                var allocvars = (((TRAM[0x251] & 0xFF) << 8) | (TRAM[0x250] & 0xFF));
+                var topram = (((TRAM[0x253] & 0xFF) << 8) | (TRAM[0x252] & 0xFF));
+                var basend = (((TRAM[0x23F] & 0xFF) << 8) | (TRAM[0x23E] & 0xFF));
+
+                var free = new Uint16Array(1);
+                free[0] = topram-basend-(allocvars<<3);
+
+                if (free < PRGPTR) {
+                    powerdev(`Not enough space to store program ${pnum}.\nClear some data or expand RAM image!`);
+                    return;
+                }
+
+                var cpaddr = (((TRAM[tstart+(pnum*2)+1] & 0xFF) << 8) | (TRAM[tstart+(pnum*2)] & 0xFF))-0x8000;
+                var eaddr = basend-0x8000;
+                var newaddr = cpaddr + PRGPTR;
+
+                if (cpaddr < basend) {
+                    const shiftmem = TRAM.subarray(cpaddr, eaddr);
+                    TRAM.set(shiftmem, newaddr);
+                }
+
+                TRAM.set(PRGBUF.subarray(0, PRGPTR), cpaddr);
+
+                for (let i=pnum; i<10;i++) {
+                    var addr = (((TRAM[tstart+(i*2)+1] & 0xFF) << 8) | (TRAM[tstart+(i*2)] & 0xFF)) + PRGPTR;
+                    TRAM[tstart+(i*2)+1] = (addr>>8) & 0xFF;
+                    TRAM[tstart+(i*2)] = addr & 0xFF;
+                }
+
+                processed++
+                stored.push(pnum);
+            }
+
+            if (LINES.length == 0) {
+                break;
+            }
+        } while (processed < 10);
+
+        powerdev("All programs processed successfully!");
+    };
+
+    reader.readAsArrayBuffer(pbasf);
+}
+
+function panelGetBAS() {
+    if (POWER && !stopped) {
+        LCD.stopAnimating();
+    }
+
+    var resf = "-=MK85 BASIC programs=-";
+
+    var offset = 0x022C;
+    var prsta = 0x826B;
+    var lim = prsta;
+    var bprogst = [];
+
+    for (let i = 0; i<10; i++) {
+        var adr = (((RAM[offset+1] & 0xFF) << 8) | (RAM[offset] & 0xFF));
+        if (adr < lim) {
+            alert("Falied to get BASIC programs: bad RAM");
+            return;
+        }
+
+        bprogst.push(adr);
+        lim = adr;
+        offset+=2;
+    }
+
+    var ps = 0;
+    var b1 = 0;
+    var b2;
+    var offset = 0x026B;
+
+    for (let p = 0; p<10; p++) {
+        if (prsta < bprogst[p]) {
+            resf+= `\n\n-[Program ${p}]-\n`;
+        }
+        while (prsta < bprogst[p])
+        {
+        b2 = b1;
+        b1 = (RAM[offset] & 0xFF);
+        switch (ps)
+        {
+            case 0:		/* first byte of the line number */
+            ps++;
+            break;
+            case 1:		/* second byte of the line number */
+            resf+= (((b1 & 0xFF) << 8) | (b2 & 0xFF)) + " ";
+            ps++;
+            break;
+            default:
+            if (b1 == 0)
+            {
+                resf+="\n";
+                ps = 0;	/* line number expected */
+            }
+            else if (b1 == 0x5C)
+            {
+                resf+="!=";
+            }
+            else if (b1 == 0x5E)
+            {
+                resf+="^";
+            }
+            else if (b1 == 0x5F)
+            {
+                resf+="<=";        
+            }
+            else if (b1 == 0x7B)
+            {
+                resf+="E";
+            }
+            else if (b1 == 0x7C)
+            {
+                resf+="PI";
+            }
+            else if (b1 == 0x7D)
+            {
+                resf+="E-";
+            }
+            else if (b1 == 0x7E)
+            {
+                resf+=">=";
+            }
+            else if ((b1 < 0xC0) && (CCODES[b1] == "|"))
+            {
+                resf+=SUCODES[b1-1];
+            }
+            else if (b1 < 0xC0)
+            {
+                resf+=CCODES[b1];
+            }
+            else if (b1 < 0xF2)
+            {
+                resf+=TOKENS[b1 - 0xC0];
+            }
+            else
+            {
+                resf+=`{${b1}}`;
+            }
+            break;
+        }
+        offset++;
+        prsta++;
+        }
+    }
+
+    var dwbas = document.getElementById("dwbas");
+    dwbas.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(resf);
+    dwbas.click();
+
+    if (POWER && !stopped) {
+        LCD.animate(LCD_ANIMSPEED);
+    }
+}
+
+function panelGetRLS() {
+    if (POWER && !stopped) {
+        LCD.stopAnimating();
+    }
+
+    var allocvars = (((RAM[0x251] & 0xFF) << 8) | (RAM[0x250] & 0xFF));
+    var topram = (((RAM[0x253] & 0xFF) << 8) | (RAM[0x252] & 0xFF));
+    var offset = 0x014E
+
+    var resf = `-=MK 85 variables list=-\n\nAllocated variables: ${allocvars}\n\nNon-zero variables:\n`;
+
+    resf += "$ = " + sv2str (offset, 30) + "\n";
+
+    if (0x826B + 8*allocvars > topram)
+        {
+          alert("Falied to get variables list: bad RAM");
+          return;
+        }
+
+    offset = topram - 8*allocvars - 0x8000;
+
+    while (allocvars-- != 0){
+        if ((RAM[offset] == 0) && RAM[offset+1] == 0) {
+            offset+=8;
+            continue;
+        }
+
+        var isnum = ((RAM[offset+1] & 0x60) == 0);
+
+        if (allocvars >= 26) {
+              resf+= `Z(${allocvars-25})${(isnum ? "" : "$")} = `;
+        }
+        else {
+              resf+= String.fromCharCode(65+allocvars) + (isnum ? "" : "$") + " = ";
+        }
+
+        if (isnum){
+            resf+= fp2str (offset, -10) + "\n";
+        }
+        else{
+            resf+= sv2str (offset, 8) + "\n";
+        }
+        offset+=8;
+    }
+
+    var dwvar = document.getElementById("dwvar");
+    dwvar.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(resf);
+    dwvar.click();
+
+    if (POWER && !stopped) {
+        LCD.animate(LCD_ANIMSPEED);
+    }
+}
+
 function panelOpenCTool() {
     const hidp = document.getElementById("mk85_ch96_int");
     hidp.style.display = (hidp.style.display == "none") ? "" : "none";
@@ -123,13 +486,24 @@ function panelOpenCTool() {
 }
 
 function panelOpenHelp() {
-    window.open(`${BASEPATH}/help.html`,'85_helpWindow', `toolbar=no, location=no, status=no, menubar=no,
+    window.open(`${BASEPATH}/help/help.html`,'85_helpWindow', `toolbar=no, location=no, status=no, menubar=no,
         scrollbars=no, resizable=no, width=820, height=340`)
 }
 
 function panelOpenDbg() {
-    window.open(`${BASEPATH}/debug.html`,'85_debugWindow', `toolbar=no, location=no, status=no, menubar=no,
-        scrollbars=no, resizable=no, width=820, height=340`)
+    const hidp = document.getElementById("mk85_dbg_int");
+    hidp.style.display = (hidp.style.display == "none") ? "" : "none";
+    document.getElementById("mk85_dbg_br").style.display = hidp.style.display;
+    if (hidp.style.display == "" && !stopped) {
+        DBG.debugStart();
+    }
+    else if (hidp.style.display == "" && stopped) {
+        debugUpdate();
+        debugUpdRegIn();
+    }
+    else{
+        DBG.debugStop();
+    }
 }
 
 
@@ -179,7 +553,7 @@ function panelResetTurSP(){
 }
 
 function panelSetTurSP(){
-    var nval = document.getElementById("turvl").value;
+    var nval = Number(document.getElementById("turvl").value);
 
     if (nval > 1000000) {
         nval = 1000000;
@@ -200,7 +574,7 @@ function panelResetNormSP(){
 }
 
 function panelSetNormSP(){
-    var nval = document.getElementById("norvl").value;
+    var nval = Number(document.getElementById("norvl").value);
 
     if (nval > 1000000) {
         nval = 1000000;
@@ -213,6 +587,13 @@ function panelSetNormSP(){
 
     SPEED_NORMAL = nval / 100;
     window.localStorage.setItem('mk_normspeed', SPEED_NORMAL);
+}
+
+
+function panelSwDivPo() {
+    ignorePowerOff = document.getElementById("ipoff").checked;
+    MK85CPU.ignorePowerOff = ignorePowerOff;
+    window.localStorage.setItem('mk_ignorepoff', ignorePowerOff);
 }
 
 function panelSwDivIg() {
@@ -229,6 +610,7 @@ function panelSwTurIg() {
 
 function panelChangeSP(){
     MK85CPU.cpuctrl ^= 0x0008;
+    panelUpdate();
 }
 
 function panelSetTRB(){
@@ -255,15 +637,40 @@ function panelSwVibro() {
     window.localStorage.setItem('mk_vibro', useVibrate);
 }
 
+function panelUnStop() {
+    PAN.panelStart();
+    if (document.getElementById("mk85_dbg_int").style.display == "") {
+        DBG.debugStart();
+    }
+    document.getElementById("stst").innerText="Pause";
+    document.getElementById("dstst").innerText="Pause";
+
+    document.getElementById("dbst").disabled = true;
+    document.getElementById("dbsts").disabled = true;
+    document.getElementById("dbbr").disabled = true;
+    document.getElementById("regist").disabled = true;
+    document.getElementById("reged").disabled = true;
+    document.getElementById("edreg").disabled = true;
+    
+    document.getElementById("disu").disabled = true;
+    document.getElementById("dispu").disabled = true;
+    document.getElementById("disgo").disabled = true;
+    document.getElementById("disgob").disabled = true;
+    document.getElementById("dispd").disabled = true;
+    document.getElementById("disd").disabled = true;
+    document.getElementById("disr").disabled = true;
+    document.getElementById("dised").disabled = true;
+    document.getElementById("diss").disabled = true;
+    stopped = false;
+}
+
 function panelResetRoF() {
     //PAN.panelStop();
     if (POWER) {
         LCD.stopAnimating();
         LCD.clearScreen();
         if (stopped) {
-            PAN.panelStart();
-            document.getElementById("stst").innerText="Pause"
-            stopped = false;
+            panelUnStop();
         }
     }
 
@@ -272,11 +679,15 @@ function panelResetRoF() {
     window.localStorage.removeItem('mk_romname');
     document.getElementById("rofi").innerText = romname;
 
-    ROM = ROM_int; // Internal ROM image constant
+    ROM = new Uint8Array(ROM_int); // Internal ROM image constant
 
     if (POWER) {
         MK85CPU = new CPU();
         startEmu();
+        panelUpdate();
+        if (document.getElementById("mk85_dbg_int").style.display == "") {
+            debugUpdate();
+        }
     }
     //PAN.panelStart();
 }
@@ -299,16 +710,14 @@ function panelLoadRoF(){
     const reader = new FileReader();
 
     reader.onload = function() {
-        console.log(reader.result)
+        //console.log(reader.result)
 
         //PAN.panelStop();
         if (POWER) {
             LCD.stopAnimating();
             LCD.clearScreen();
             if (stopped) {
-                PAN.panelStart();
-                document.getElementById("stst").innerText="Pause"
-                stopped = false;
+                panelUnStop();
             }
         }
 
@@ -321,6 +730,10 @@ function panelLoadRoF(){
         if (POWER) {
             MK85CPU = new CPU();
             startEmu();
+            panelUpdate();
+            if (document.getElementById("mk85_dbg_int").style.display == "") {
+                debugUpdate();
+            }
         }
         
         //PAN.panelStart();
@@ -368,16 +781,14 @@ function panelLoadRaF() {
     const reader = new FileReader();
 
     reader.onload = function() {
-        console.log(reader.result)
+        //console.log(reader.result)
 
         //PAN.panelStop();
         if (POWER) {
             LCD.stopAnimating();
             LCD.clearScreen();
             if (stopped) {
-                PAN.panelStart();
-                document.getElementById("stst").innerText="Pause"
-                stopped = false;
+                panelUnStop();
             }
         }
 
@@ -386,11 +797,16 @@ function panelLoadRaF() {
         window.localStorage.setItem('mk_ram', btoa(String.fromCharCode.apply(null, RAM)));
         window.localStorage.setItem('mk_ramname', ramname);
         document.getElementById("rfi").innerText = ramname;
+        document.getElementById("mktype").setAttributeNS(null, "opacity", (RAM.length > 2048 ? 0 : 1));
         panelCalcRAM();
 
         if (POWER) {
             MK85CPU = new CPU();
             startEmu();
+            panelUpdate();
+            if (document.getElementById("mk85_dbg_int").style.display == "") {
+                debugUpdate();
+            }
         }
         //PAN.panelStart();
     };
@@ -401,7 +817,7 @@ function panelLoadRaF() {
 function panelSwOverlay() {
     var opacity = (document.getElementById("lay").checked == true) ? 1 : 0;
 
-    for (i=1; i < 4; i++){
+    for (let i=1; i < 4; i++){
         document.getElementById(`ovl${i}`).setAttributeNS(null, "opacity", opacity);
     }
 }
@@ -412,9 +828,7 @@ function panelDevRestart() {
     LCD.clearScreen();
 
     if (stopped) {
-        PAN.panelStart();
-        document.getElementById("stst").innerText="Pause"
-	    stopped = false;
+        panelUnStop();
     }
 
     MK85CPU = new CPU();
@@ -437,12 +851,40 @@ function panelSwState(stat) {
         PAN.panelStart();
         LCD.animate(LCD_ANIMSPEED);
         document.getElementById("stst").innerText="Pause";
+        document.getElementById("dstst").innerText="Pause";
+        if (document.getElementById("mk85_dbg_int").style.display == "") {
+            DBG.debugStart();
+        }
     }
     else {
         PAN.panelStop();
         LCD.stopAnimating();
         document.getElementById("stst").innerText="Resume";
+        document.getElementById("dstst").innerText="Resume";
+        if (document.getElementById("mk85_dbg_int").style.display == "") {
+            DBG.debugStop();
+            debugUpdRegIn();
+            debugUpdate();
+        }
+        
     }
+
+    document.getElementById("dbst").disabled = !stopped;
+	document.getElementById("dbsts").disabled = !stopped;
+	document.getElementById("dbbr").disabled = !stopped;
+    document.getElementById("regist").disabled = !stopped;
+    document.getElementById("reged").disabled = !stopped;
+    document.getElementById("edreg").disabled = !stopped;
+
+    document.getElementById("disu").disabled = !stopped;
+    document.getElementById("dispu").disabled = !stopped;
+    document.getElementById("disgo").disabled = !stopped;
+    document.getElementById("disgob").disabled = !stopped;
+    document.getElementById("dispd").disabled = !stopped;
+    document.getElementById("disd").disabled = !stopped;
+    document.getElementById("disr").disabled = !stopped;
+    document.getElementById("dised").disabled = !stopped;
+    document.getElementById("diss").disabled = !stopped;
 }
 
 function panelUpdNSz() {
@@ -454,6 +896,9 @@ function panelNewMem(){
     if (POWER) {
         LCD.stopAnimating();
         LCD.clearScreen();
+        if (stopped) {
+            panelUnStop();
+        }
     }
     var nmemsiz = document.getElementById("msiz").value
     RAM = new Uint8Array((nmemsiz*1024));
@@ -461,11 +906,14 @@ function panelNewMem(){
     window.localStorage.removeItem('mk_ramname');
     ramname = "internal";
     document.getElementById("rfi").innerText = ramname;
+    document.getElementById("mktype").setAttributeNS(null, "opacity", (RAM.length > 2048 ? 0 : 1));
 
     if (!POWER && document.getElementById("aini").checked == true) {
         document.getElementById("swi").setAttributeNS(null, "opacity", 0);
         document.getElementById("stst").disabled = false;
 	    document.getElementById("rst").disabled = false;
+        document.getElementById("dstst").disabled = false;
+	    document.getElementById("drst").disabled = false;
         document.getElementById("cspm").disabled = false;
 	    document.getElementById("rstm").disabled = false;
         POWER = true;
@@ -476,14 +924,15 @@ function panelNewMem(){
     }
     else if (POWER) {
         MK85CPU = new CPU();
-        if (stopped) {
-            PAN.panelStart();
-            document.getElementById("stst").innerText="Pause"
-            stopped = false;
-        }
         startEmu();
-        if (document.getElementById("aini").checked == true)
+        if (document.getElementById("aini").checked == true){
             ramAutoInit();
+        }
+        panelUpdate();
+        if (document.getElementById("mk85_dbg_int").style.display == "") {
+            debugUpdate();
+        }
+        
     }
     //PAN.panelStart();
 }

@@ -20,7 +20,7 @@ function createSVG(w,h,style) {
 }
 
 function createOverlayOn(svg){
-	for (i=1; i < 4; i++){
+	for (let i=1; i < 4; i++){
 		var svgimg = document.createElementNS(svgNS,'image');
 		svgimg.setAttributeNS(null,"id",`ovl${i}`);
 		svgimg.setAttributeNS(null,'height','8');
@@ -43,6 +43,16 @@ function createImageOn(svg){
 	svgimg.setAttributeNS(null,'y','0');
 	svgimg.setAttributeNS(null, 'visibility', 'visible');
 	svg.append(svgimg);
+
+	var svglab = document.createElementNS(svgNS,'image');
+	svglab.setAttributeNS(null,"id","mktype");
+	svglab.setAttributeNS(null,'height','17');
+	svglab.setAttributeNS(null,'width','102');
+	svglab.setAttributeNS('http://www.w3.org/1999/xlink','href', `${BASEPATH}/bitmaps/label.png`);
+	svglab.setAttributeNS(null,'x','638');
+	svglab.setAttributeNS(null,'y','49');
+	svglab.setAttributeNS(null, 'visibility', 'visible');
+	svg.append(svglab);
 }
 
 function createButtonsOn(svg) {

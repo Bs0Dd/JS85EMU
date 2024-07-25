@@ -15,9 +15,8 @@ CPU.prototype.execVector = function() {
 	} catch(e) {
 		if(e == this.vectors.TRAP_BUS_ERROR) {
 			if(this.vector == this.vectors.TRAP_BUS_ERROR) {
-				console.log("Caught bus error trap within itself. CPU HALTED.");
-				console.log(MK85CPU.reg_u16[7].toString(16), "PS", PS.toString(16), "PC", PC.toString(16));
-				console.log("R0", MK85CPU.reg_u16[0].toString(16), "R1", MK85CPU.reg_u16[1].toString(16))
+				console.log("Caught bus error trap within itself.");
+				console.log("CPU HALTED! SP:", PS.toString(16), "PC:", PC.toString(16));
 				this.vector = null;
 				return CPU.prototype.halt();
 			} else {
