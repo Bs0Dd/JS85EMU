@@ -323,7 +323,7 @@ function sv2str (offset, maxlen) {
           {
             result+= '+';
           }
-          result += `CHR(${c})`
+          result += `CHR ${c}`
           plus = 1;
         }
       }
@@ -367,6 +367,7 @@ function basic_token(LINE, LPTR) {
 
 function conv_char(chr) {
   var c1 = chr[0];
+
   for (let i=0; i < CCODES.length; i++) {
     if (c1 == CCODES[i]) {
       return i;
@@ -384,7 +385,7 @@ function conv_char(chr) {
 
 // Parse string with BASIC code
 
-function bas_parser(BUF, PTR, LINE) {
+function bas_parser(BUF, PTR, LINE, PREVN) {
   var sptr = PTR;
 
   // parse line number
@@ -393,13 +394,16 @@ function bas_parser(BUF, PTR, LINE) {
   var lptr = 4;
   while (isNaN(linum = Number(LINE.substring(0, lptr)))) {
     if (lptr == 1) {
-      return PTR; // failed to get line number, just skipping (treated as a comment line)
+      return [PTR, PREVN]; // failed to get line number, just skipping (treated as a comment line)
     }
     lptr--;
   }
 
   if (linum == 0) {
     return "LNUMPAR: line number cannot be zero";
+  }
+  else if (linum <= PREVN) {
+    return "LNUMPAR: line number cannot be lower or equal to previous";
   }
 
   while (LINE[lptr] == ' ') {
@@ -427,7 +431,14 @@ function bas_parser(BUF, PTR, LINE) {
       if (isquote || iscomment) {
         var code = LINE[lptr].charCodeAt(0);
         if ((code > 0x1F) && (code != 0x7F)) {
-          var char = conv_char(LINE[lptr]+LINE[lptr+1]);
+          var char;
+          if ((LINE[lptr] == "ᵉ") && (LINE[lptr+1] == "⁻")) {
+            char = 0x7D;
+            lptr++;
+          }
+          else {
+            char = conv_char(LINE[lptr]+LINE[lptr+1]);
+          }
           if (char < 0) {
             return "CHARPAR: invalid character, position "+lptr;
           }
@@ -479,6 +490,10 @@ function bas_parser(BUF, PTR, LINE) {
           if (LINE[lptr] == "^") {
             char = "^".charCodeAt(0);
           }
+          else if ((LINE[lptr] == "ᵉ") && (LINE[lptr+1] == "⁻")) {
+            char = 0x7D;
+            lptr++;
+          }
           else {
             var char = conv_char(LINE[lptr].toUpperCase()+LINE[lptr+1]);
             if (char < 0) {
@@ -519,5 +534,5 @@ function bas_parser(BUF, PTR, LINE) {
     return `LLENCHK: a line without spaces cannot exceed 63 characters, line have `+destrl;
   }
 
-  return PTR+1; // zero termination of the "string"
+  return [PTR+1, linum]; // zero termination of the "string"
 }

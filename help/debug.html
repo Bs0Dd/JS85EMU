@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>JS85EMU Help</title>
+<meta charset="UTF-8">
+<style>
+    body {text-align: center;}
+
+    .menulink {
+        padding-left: 10px;
+        padding-right: 10px;
+        font-weight: bold;
+    }
+</style>
+</head>
+<body>
+
+<h1>JS85EMU Help</h1>
+
+<h3><a href="debug_ru.html">Русский</a></h3>
+
+<hr>
+<h3 style="margin-top: 5px;margin-bottom: 5px;">Menu</h3>
+<a class="menulink" href="help.html">Main page</a>
+<a class="menulink" href="interface.html">Emulator interface</a><br>
+<a class="menulink" href="panel.html">Working with the options panel</a>
+<span class="menulink">Working with the Debugger</span>
+<a class="menulink" href="chr96.html">Working with the CHR96 utility</a><br>
+<a class="menulink" href="conv.html">Working with BASIC data converters</a><br>
+<a class="menulink" href="faq.html">Frequently asked questions (FAQ)</a>
+<hr>
+
+<h3>"Debugger" utility</h3>
+
+<img src="dbgr.png" alt="debugger"><br>
+
+<p style="text-align: left;">
+    &nbsp;&nbsp;&nbsp;&nbsp;The emulator contains a <b>simple debugger</b>, oriented towards working with <b>PDP-11</b> processors.
+    For the <b>average user</b> it certainly doesn't bring much benefit, but it can be useful for <b>advanced people</b>
+    who understand the internal structure of the system.<br><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;The debugger consists of <b>four</b> sections:<br>
+</p><br>
+
+<h4>"Disassembler" section</h4>
+
+<img src="disasm.png" alt="disasm"><br>
+
+<p style="text-align: left;">
+    &nbsp;&nbsp;&nbsp;&nbsp;The <b>disassembler section</b> is used to view the <b>disassembled code</b> of ROM or RAM.
+    The <b>lite-disassembler</b> used here is quite simple and is only an <b>auxiliary</b> tool.<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;In the <b>normal execution</b> mode, the disassembler controls are <b>locked</b>,
+    and the display of disassembled instructions is carried out from the <b>current</b> (at the address in <b>R7/PC</b>) instruction.
+    For ease of orientation, the <b>current instruction</b> is always highlighted in <b>white</b>.
+    In <b>pause</b> mode, it becomes possible to <b>move</b> through the disassembler list.
+    You can <b>scroll</b> through the operations <b>one by one</b> or <b>whole pages</b> (by <b>10</b> operations),
+    and also perform a <b>transition</b> to the <b>address</b> specified in the field.
+    The <b>########</b> symbols instead of an operation mean that there is <b>neither RAM nor ROM</b> at the given address</b> (empty area).<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;If necessary, it is possible to <b>replace</b> one operation with another, using the <b>lite-assembler</b>.
+    To do this, you must enter the address of the <b>operation to be replaced</b> in the <b>address field</b>,
+    you can also select it using the <b>movement buttons</b> or <b>mouse click</b> on the operation in the disassembler list
+    (the current operation will be <b>automatically</b> transferred to the new operation input field).
+    Then enter it in the <b>new operation</b> field (or transfer it from the disassembler using the <b>"Read"</b> button and make a modification)
+    and press the button <b>"Set"</b> to perform the replacement. If there is an <b>error</b> in the assembler code of the operation and the lite-assembler
+    <b>could not</b> perform the encoding into machine code, a <b>notification</b> will be issued with the reason for the <b>error</b> that occurred.
+    If the <b>ROM</b> area has been <b>modified</b>, then after <b>reloading</b> the page with the emulator the changes will be <b>lost</b>.<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;The disassembler can display data (addresses and values) in <b>hexadecimal</b> or <b>octal</b> system.
+    In this case, to <b>go</b> to an address, it must be specified in accordance with the <b>currently selected</b> system,
+    the same applies to <b>values</b> in the <b>assembler</b> format of operations.<br><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<b>ATTENTION:</b> due to the <b>design simplicity</b> of the lite-disassembler,
+    to determine the address of the previous operation (when navigating <b>back</b> one operation or page) a <b>simplest predictor</b> is used,
+    which determines the size (from <b>1</b> to <b>3</b> words) of the previous operation.
+    In this regard, the predictor can sometimes calculate an <b>wrong address</b> of the operation.
+    Therefore, it is recommended to scroll the disassembler list immediately by <b>2-4</b> operations back, in order to <b>exclude</b> incorrect calculation.<br>
+</p><br>
+
+<h4>"Registers" section</h4>
+
+<img src="regs.png" alt="regs"><br>
+
+<p style="text-align: left;">
+    &nbsp;&nbsp;&nbsp;&nbsp;The section, as the name suggests, displays the <b>register contents</b> of the <b>PDP-11</b> type
+    processor and special registers provided by a specific <a href="http://mk.bs0dd.net/piotr433/manuals/ka1013vm1.pdf" target="_blank"><b>KA1013VM1</b></a> (<b>T36VM1-2</b>) processor.
+    You can switch the display of register values ​​in the <b>hexadecimal</b> or <b>octal</b> system.
+    The selected system also affects the <b>breakpoint</b> setting field and the <b>register value</b> change field in the section <b>"Control"</b>.<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;For the <b>PSW</b> (status word) register, in addition to the numeric value, the <b>flags</b> set in it are also displayed.
+    For convenience, the special registers <b>CPUCTRL</b> (processor status and configuration register), <b>PP</b> (parallel port) and
+    <b>KEYB</b> (keyboard port) have a <b>bit display</b> of the current state (the <b>#</b> sign indicates unused bits in the register).
+    The <b>x</b> signs instead of numbers in the <b>PP</b> register indicate that, according to the configuration in the <b>CPUCTRL</b> register,
+    this <b>group of bits</b> of the parallel port is in <b>input</b> mode.<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;If during <b>pause</b> you click on <b>one of the registers</b>, it will automatically <b>be selected</b> for editing in the <b>"Control"</b> section.
+</p><br>
+
+<h4>"Control" section</h4>
+
+<img src="execc.png" alt="execc"><br>
+
+<p style="text-align: left;">
+    &nbsp;&nbsp;&nbsp;&nbsp;This section controls the <b>emulator operation</b> and consists of <b>four</b> small subsections.
+    The <b>execution control</b> subsection contains buttons for <b>pausing</b> and <b>restarting</b> the emulator (duplicated from the <b>options panel</b>),
+    as well as a button for <b>closing</b> the Debugger. The <b>step-by-step execution</b> subsection becomes available when the emulator is <b>paused</b>
+    and allows you to execute the program <b>step-by-step</b>, executing at a time <b>one</b> (<b>"Single"</b> button) or <b>more</b> steps
+    (<b>number of steps</b> input field and <b>"Execute"</b> button). The <b>breakpoints</b> subsection allows you to set (the emulator must be in <b>pause</b> mode)
+    or <b>clear</b> an already set <b>breakpoint</b>. Upon reaching the <b>address</b> specified in the breakpoint field, the emulator will automatically switch to <b>pause</b> mode,
+    after which the user will be able to <b>interact</b> with the Debugger for further debugging. The type of <b>numeric system</b> in which the <b>address</b> must be entered,
+    depends on the type set in the <b>"Registers"</b> section. The <b>register value</b> changing subsection allows, by selecting the desired register from the <b>list</b>
+    (its <b>current value</b> will be displayed in the input field), <b>change</b> its value and write it using the <b>"Change"</b> button.
+    The value of the <b>KEYB</b> register cannot be changed because the <b>keyboard port</b> only works as an <b>input</b>
+    and the state of the register depends on the <b>currently pressed</b> key. The <b>numeric system</b> type also depends on the <b>"Registers"</b> section.
+</p><br>
+
+<h4>"RAM Editor" section</h4>
+
+<img src="ramed.png" alt="ramed"><br>
+
+<p style="text-align: left;">
+    &nbsp;&nbsp;&nbsp;&nbsp;The section allows you to <b>view</b> and <b>edit</b> the contents of <b>RAM</b> in real time (without stopping the emulator).
+    One page displays <b>10</b> lines, each containing <b>16</b> bytes. At first, the bytes are shown as <b>numeric values</b>
+    (according to the specified <b>hexadecimal</b> or <b>octal</b> system), then the same bytes are shown as <b>ASCII</b> characters.
+    If necessary, instead of the <b>"bytes"</b> mode, you can use the <b>"words"</b> mode, in which bytes are combined into <b>processor words</b>
+    (with the order <b>from little to big</b>, i.e. <b>AA 01 => 01AA</b> or in octal <b>252 001 => 000652</b>).
+    In this case, the <b>address</b> of the cell must always be <b>even</b>. The <b>#</b> symbols instead of the <b>numeric values</b> of the cells mean that <b>this address</b>
+    is outside the <b>RAM</b> (empty area).<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;Navigation through the RAM can be performed by shifting <b>left/right</b>,
+    <b>up/down</b> and with <b>page-by-page</b> shift (by <b>160</b> cells) up/down. You can also move to the address specified in the <b>input field</b>.
+    The numeric system for all input fields <b>corresponds</b> to the system selected for displaying cells.<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;To edit the <b>value</b> of a cell (<b>byte</b> or <b>word</b>), enter the <b>address</b> of the required cell in the corresponding field
+    (by default, the address of the <b>first cell</b> on the page is set) and enter the required <b>value</b> in the adjacent field
+    (by default, the value of the <b>first cell</b> on the page is also set). If necessary, you can <b>read</b> the current value of the cell
+    (<b>the address</b> of which is specified in the field) using the <b>"Read"</b> button.
+    <b>Writing</b> of the value, respectively, is carried out using the <b>"Change"</b> button.<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<b>Clicking</b> on a cell (in <b>numeric</b> or <b>ASCII</b> format) allows you to <b>quickly edit</b> it.
+    The <b>address</b> field (of the cell being edited) will display the address of the cell <b>selected by clicking</b>,
+    and the <b>current</b> value of the cell will appear in the <b>value</b> field, which will also be automatically <b>highlighted</b>.
+    All you need to do is <b>enter</b> the new value and click the <b>"Change"</b> button.
+</p>
+
+<hr>
+<h3 style="margin-top: 5px;margin-bottom: 5px;">Menu</h3>
+<a class="menulink" href="help.html">Main page</a>
+<a class="menulink" href="interface.html">Emulator interface</a><br>
+<a class="menulink" href="panel.html">Working with the options panel</a>
+<span class="menulink">Working with the Debugger</span>
+<a class="menulink" href="chr96.html">Working with the CHR96 utility</a><br>
+<a class="menulink" href="conv.html">Working with BASIC data converters</a><br>
+<a class="menulink" href="faq.html">Frequently asked questions (FAQ)</a>
+<hr>
+
+</body>
+</html> 

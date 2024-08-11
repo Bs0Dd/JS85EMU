@@ -61,15 +61,15 @@ function DBGTOOL() {
     <input type="radio" name="regoct" id="regoct" onchange="REGOCT=true;debugSetRegV();debugUpdate();"><label for="regoct">Octal</label></div>
     <div style="font-size:13px;margin:5px;">
     <table style="width:100%;">
-    <tr><td>R0: <span id="dbgr0">0000</span></td> <td>R4: <span id="dbgr4">0000</span></td></tr>
-    <tr><td>R1: <span id="dbgr1">0000</span></td> <td>R5: <span id="dbgr5">0000</span></td></tr>
-    <tr><td>R2: <span id="dbgr2">0000</span></td> <td>R6 (SP): <span id="dbgr6">0000</span></td></tr>
-    <tr><td>R3: <span id="dbgr3">0000</span></td> <td>R7 (PC): <span id="dbgr7">0000</span></td></tr>
-    <tr><td colspan="2">PSW: <span id="dbgrp" style="font-family:monospace, monospace;"></span>
+    <tr><td id="dr0" onclick="debugRegClick(this);">R0: <span id="dbgr0">0000</span></td> <td id="dr4" onclick="debugRegClick(this);">R4: <span id="dbgr4">0000</span></td></tr>
+    <tr><td id="dr1" onclick="debugRegClick(this);">R1: <span id="dbgr1">0000</span></td> <td id="dr5" onclick="debugRegClick(this);">R5: <span id="dbgr5">0000</span></td></tr>
+    <tr><td id="dr2" onclick="debugRegClick(this);">R2: <span id="dbgr2">0000</span></td> <td id="dr6" onclick="debugRegClick(this);">R6 (SP): <span id="dbgr6">0000</span></td></tr>
+    <tr><td id="dr3" onclick="debugRegClick(this);">R3: <span id="dbgr3">0000</span></td> <td id="dr7" onclick="debugRegClick(this);">R7 (PC): <span id="dbgr7">0000</span></td></tr>
+    <tr><td id="dr8" onclick="debugRegClick(this);" colspan="2">PSW: <span id="dbgrp" style="font-family:monospace, monospace;"></span>
     (<span id="dbgrph"></span>)</td></tr>
     </table><br>
-    &nbsp;CPUC: <span id="dbgprc"></span><br>
-    &nbsp;PP: <span id="dbgkport"></span><br>
+    &nbsp;<span id="dr9" onclick="debugRegClick(this);">CPUC: <span id="dbgprc"></span></span><br>
+    &nbsp;<span id="drA" onclick="debugRegClick(this);">PP: <span id="dbgkport"></span></span><br>
     &nbsp;KEYB: <span id="dbgkb"></span><br>
     </div>`
 
@@ -249,7 +249,7 @@ function DBGTOOL() {
     <button onclick="if (((RAMADDR+0x10) < (RAM.length+RAMSTA)) && ((RAMADDR+0x10) < RAMLIM-0x8F)){RAMADDR+=0x10;debugDrawRamAddr();debugUpdate();}"><b>Down</b></button>
     <button onclick="debugShiftR();"><b>-&gt;</b></button><br>
     Address: <input style="width:50px;" value="0000" maxlength="4" oninput="debugValidInput(this, RAMOCT)" id="ramcha" onfocus="panelEditFocus()" onblur="panelEditNoFocus()">
-    Value: <input style="width:50px;" value="0000" maxlength="4" oninput="debugValidInput(this, RAMOCT)" id="ramch" onfocus="panelEditFocus()" onblur="panelEditNoFocus()">
+    Value: <input style="width:50px;" value="0000" maxlength="2" oninput="debugValidInput(this, RAMOCT)" id="ramch" onfocus="panelEditFocus()" onblur="panelEditNoFocus()">
     <button onclick="debugReadMem();"><b>Read</b></button>
     <button onclick="debugChangeMem();"><b>Change</b></button>`;
 
@@ -313,6 +313,30 @@ function debugDisSet() {
     else {
         alert("Failed to assemble operation: "+statusstr);
     }
+}
+
+function debugRegClick(obj) {
+    if (!stopped) {
+        return;
+    }
+
+    var numr = parseInt(obj.id[2], 16);
+    var regsel = document.getElementById("regist");
+
+    if (numr < 8) {
+        regsel.value = "R"+numr;
+    }
+    else if (numr == 8) {
+        regsel.value = "PSW";
+    }
+    else if (numr == 9) {
+        regsel.value = "CPUCTRL";
+    }
+    else if (numr == 10) {
+        regsel.value = "PP";
+    }
+
+    debugUpdRegIn();
 }
 
 function debugDisClick(obj) {

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Справка по JS85EMU</title>
+<meta charset="UTF-8">
+<style>
+    body {text-align: center;}
+
+    .menulink {
+        padding-left: 10px;
+        padding-right: 10px;
+        font-weight: bold;
+    }
+</style>
+</head>
+<body>
+
+<h1>Справка по JS85EMU</h1>
+
+<h3><a href="chr96.html">English</a></h3>
+
+<hr>
+<h3 style="margin-top: 5px;margin-bottom: 5px;">Меню</h3>
+<a class="menulink" href="help_ru.html">Главная страница</a>
+<a class="menulink" href="interface_ru.html">Интерфейс эмулятора</a><br>
+<a class="menulink" href="panel_ru.html">Работа с панелью опций</a>
+<a class="menulink" href="debug_ru.html">Работа с Дебаггером</a>
+<span class="menulink">Работа с утилитой CHR96</span><br>
+<a class="menulink" href="conv_ru.html">Работа с конвертерами BASIC данных</a><br>
+<a class="menulink" href="faq_ru.html">Часто задаваемые вопросы (FAQ)</a>
+<hr>
+
+<h3>Утилита CHR96</h3>
+
+<img src="chr96.png" alt="chr96"><br>
+
+<p style="text-align: left;">
+    &nbsp;&nbsp;&nbsp;&nbsp;В МК 85 <b>символ</b> под номером <b>96</b> является <b>переназначаемым</b> и задать его можно при помощи команды <b>LETC</b> с <b>закодированной</b> строкой.
+    Для описания каждой <b>линии</b> (<b>5</b> пикселей) в строке используется один символ от <b>0</b> до <b>V</b>. В <b>инструкции по эксплуатации</b> пользователям предлагалось
+    производить кодирование пикселей в строку <b>вручную</b>, при помощи <b>таблицы</b>:<br>
+</p>
+
+<img src="encode.jpg" alt="table" height="400px"><br>
+ 
+<p style="text-align: left;">
+    &nbsp;&nbsp;&nbsp;&nbsp;<b>Символ 96</b> очень полезен для вывода <b>графики</b> в программах и играх, но <b>ручное кодирование</b> весьма неудобно.
+    Утилита позволяет <b>в графической форме</b> задать символ и получить его <b>код</b>. Достаточно лишь <b>кликнуть</b> по нужным <b>пикселям на матрице</b>,
+    после чего в строке ввода будет <b>готовый код</b>. В эту строку можно ввести и <b>ранее закодированный</b> символ, в таком случае на матрице появится его <b>графическое представление</b>.
+    Кнопки <b>"Copy"</b> и <b>"Clear"</b> служат для <b>копирования в буфер обмена</b> и <b>очистки строки</b> (а вместе с ней и <b>матрицы</b>) соответственно.<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;Кнопка <b>"Send to MK"</b> позволяет <b>передать</b> находящийся в строке <b>код</b> в виртуальный микрокомпьютер с помощью эмуляции нажатий клавиш.
+    Поскольку код является <b>строкой</b>, в микрокомпьютере он должен быть <b>обрамлен кавычками</b> (<b>"</b>), поэтому для удобства пользователя с помощью опции <b>"in quotes"</b>
+    при посылке строки она <b>автоматически</b> будет <b>помещена в кавычки</b>.<br><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<b>ВНИМАНИЕ! Для корректной работы посылки строки необходимо, чтобы микрокомпьютер находился в нормальном режиме работы (в режиме ошибки ввод невозможен),
+       не был активен расширенный режим (EXT) и модификаторы S и F. В противном случае передаваемый код будет искажен.</b> 
+</p>
+
+<img src="keysinp.gif" alt="input">
+
+<hr>
+<h3 style="margin-top: 5px;margin-bottom: 5px;">Меню</h3>
+<a class="menulink" href="help_ru.html">Главная страница</a>
+<a class="menulink" href="interface_ru.html">Интерфейс эмулятора</a><br>
+<a class="menulink" href="panel_ru.html">Работа с панелью опций</a>
+<a class="menulink" href="debug_ru.html">Работа с Дебаггером</a>
+<span class="menulink">Работа с утилитой CHR96</span><br>
+<a class="menulink" href="conv_ru.html">Работа с конвертерами BASIC данных</a><br>
+<a class="menulink" href="faq_ru.html">Часто задаваемые вопросы (FAQ)</a>
+<hr>
+
+</body>
+</html> 

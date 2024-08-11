@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>JS85EMU Help</title>
+<meta charset="UTF-8">
+<style>
+    body {text-align: center;}
+
+    .menulink {
+        padding-left: 10px;
+        padding-right: 10px;
+        font-weight: bold;
+    }
+</style>
+</head>
+<body>
+
+<h1>JS85EMU Help</h1>
+
+<h3><a href="chr96_ru.html">Русский</a></h3>
+
+<hr>
+<h3 style="margin-top: 5px;margin-bottom: 5px;">Menu</h3>
+<a class="menulink" href="help.html">Main page</a>
+<a class="menulink" href="interface.html">Emulator interface</a><br>
+<a class="menulink" href="panel.html">Working with the options panel</a>
+<a class="menulink" href="debug.html">Working with the Debugger</a>
+<span class="menulink">Working with the CHR96 utility</span><br>
+<a class="menulink" href="conv.html">Working with BASIC data converters</a><br>
+<a class="menulink" href="faq.html">Frequently asked questions (FAQ)</a>
+<hr>
+
+<h3>CHR96 utility</h3>
+
+<img src="chr96.png" alt="chr96"><br>
+
+<p style="text-align: left;">
+    &nbsp;&nbsp;&nbsp;&nbsp;In MK 85, <b>symbol</b> number <b>96</b> is <b>reassignable</b> and can be set using the <b>LETC</b> command with an <b>encoded</b> string.
+    One character from <b>0</b> to <b>V</b> is used to describe each <b>line</b> (<b>5</b> pixels).
+    The <b>manual</b> suggested that users encode pixels into a string <b>manually</b> using a <b>table</b>:<br>
+</p>
+
+<img src="encode.jpg" alt="table" height="400px"><br>
+ 
+<p style="text-align: left;">
+    &nbsp;&nbsp;&nbsp;&nbsp;The <b>96 character</b> is very useful for displaying <b>graphics</b> in programs and games, but <b>manual coding</b> is very inconvenient.
+    The utility allows you to specify a symbol <b>in graphical form</b> and get its <b>code</b>.
+    You just need to <b>click</b> on the desired <b>pixels on the matrix</b>, after which the <b>ready-made code</b> will be in the input line.
+    You can also enter a <b>previously encoded</b> symbol into this line, in which case its <b>graphical representation</b> will appear on the matrix.
+    The <b>"Copy"</b> and <b>"Clear"</b> buttons are used to <b>copy to the clipboard</b> and <b>clear the line</b> (and with it the <b>matrix</b>), respectively.<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;The <b>"Send to MK"</b> button allows you to <b>transfer</b> the <b>code</b> in the input line to a virtual microcomputer using keystroke emulation.
+    Since the code is a <b>string</b>, in the microcomputer it must be <b>surrounded by quotation marks</b> (<b>"</b>),
+    therefore, for the convenience of the user, using the <b>"in quotes"</b> option, when sending a string,
+    it will <b>automatically</b> be <b>placed in quotation marks</b>.<br><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<b>ATTENTION! For the correct operation of sending a string, it is necessary that the microcomputer be in normal operation mode
+    (in error mode input is not possible), the extended mode (EXT) and modifiers S and F were not active. Otherwise, the transmitted code will be distorted.</b>
+</p>
+
+<img src="keysinp.gif" alt="input">
+
+<hr>
+<h3 style="margin-top: 5px;margin-bottom: 5px;">Menu</h3>
+<a class="menulink" href="help.html">Main page</a>
+<a class="menulink" href="interface.html">Emulator interface</a><br>
+<a class="menulink" href="panel.html">Working with the options panel</a>
+<a class="menulink" href="debug.html">Working with the Debugger</a>
+<span class="menulink">Working with the CHR96 utility</span><br>
+<a class="menulink" href="conv.html">Working with BASIC data converters</a><br>
+<a class="menulink" href="faq.html">Frequently asked questions (FAQ)</a>
+<hr>
+
+</body>
+</html> 

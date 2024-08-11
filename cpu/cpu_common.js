@@ -66,7 +66,7 @@ CPU.prototype.access = function(addr,writeVal,isByte) {
 		switch(addr) {
 			case 0x0104:
 			case 0x0105: {
-				this.cpuctrl = writeVal;
+				this.cpuctrl = writeVal & 0xFFFF;
 //				console.log("cpuctrl <= ", writeVal.toString(16));
 				return null;
 			}

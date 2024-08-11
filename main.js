@@ -21,7 +21,7 @@ window.onload = function() {
 	document.getElementById("mktype").setAttributeNS(null, "opacity", (RAM.length > 2048 ? 0 : 1));
 };
 
-var VERVAR = "1.4 - build 25.07.2024"
+var VERVAR = "1.5 - build 12.08.2024"
 
 var supportsVibrate = "vibrate" in navigator;
 
@@ -55,6 +55,8 @@ var BREAKPOINT = false;
 var ignoreFreqDiv = loadProperty('mk_ignorediv', false, true);
 var ignorePowerOff = loadProperty('mk_ignorepoff', false, true);
 var forceTurbo = loadProperty('mk_forceturbo', false, true);
+
+var usePlRom = loadProperty('mk_polrom', false, true);
 
 var DEBUG = loadProperty('mk_debugmsg', false, true);
 
@@ -93,11 +95,17 @@ if(ram == null) {
 var rom = window.localStorage.getItem('mk_rom');
 var romname = window.localStorage.getItem('mk_romname');
 
-if(rom == null) {
+if (usePlRom) {
+	console.log("Loading internal ROM memory file");
+	romname = "internal (PL ROM v27B)";
+
+	ROM = new Uint8Array(ROM_pol); // Internal ROM image constant (piotr)
+}
+else if(rom == null) {
 	console.log("Loading internal ROM memory file");
 	romname = "internal";
 
-	ROM = new Uint8Array(ROM_int); // Internal ROM image constant
+	ROM = new Uint8Array(ROM_int); // Internal ROM image constant (factory)
 } else {
 	console.log("Getting ROM contents from local storage");
 

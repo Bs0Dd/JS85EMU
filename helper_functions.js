@@ -88,11 +88,10 @@ function devicePower() {
 function startEmu() {
 	glueCPU();
 	LCD.timerCallback = function () {
-		if(uniquesPressed.length>0)
+		if(keysRead(PP)>0)
 		{
 //			if(uniquesPressed.indexOf("stop")!=-1) MK85CPU.flag_halt = true;
-			MK85CPU.cpuctrl |= 0x0400;	// enable CPU clock if anything is pressed
-//			if()
+			MK85CPU.cpuctrl |= 0x0400;	// enable CPU clock if key in selected by PP row is pressed
 		}
 		MK85CPU.steps = 1;
 		for(var steps = 0; steps < MK85CPU.steps; steps++)
@@ -138,36 +137,16 @@ var PP = 0;	// CPU parallel port for now
 
 // Attach CPU to everything else
 function glueCPU() {
-	if (RAM.length > 32768) {  // 32KB max size
-		RAM = RAM.subarray(0, 32768);
-		console.log("Maximum RAM memory size is 32KB, memory area reduced");
-	}
-	else if (RAM.length % 2048 != 0) {  // Real processor uses a RAM chips multiple of 2KB min
-		var nRAM = new Uint8Array((Math.floor(RAM.length / 2048)+1)*2048);
-		nRAM.set(RAM);
-		RAM = nRAM;
-		console.log(`The RAM size must be a multiple of 2KB, increasing the area to ${RAM.length / 1024}KB.`);
-	}
-
-	if (ROM.length > 32768) {  // 32KB max size
-		ROM = ROM.subarray(0, 32768);
-		console.log("Maximum ROM memory size is 32KB, memory area reduced");
-	}
-	else if (ROM.length % 8192 != 0) {  // Real processor uses a RAM chips multiple of 8KB min
-		var nROM = new Uint8Array((Math.floor(ROM.length / 8192)+1)*8192);
-		nROM.set(ROM);
-		ROM = nROM;
-		console.log(`The ROM size must be a multiple of 8KB, increasing the area to ${RAM.length / 1024}KB.`);
-	}
-	
+		
 	var ramLastAddr = 0x8000+RAM.length;
+	var romLastAddr = 0x0000+ROM.length;
 	
 	MK85CPU.readCallback = function (addr) {
 		if((addr&0xfffe)==0x0100) return (keysRead(PP)>>((addr&1)?8:0))&0xff;
-		if(addr<0x8000) return ROM[addr&0x7FFF];
+		if((addr<0x8000)&&(addr<romLastAddr)) return ROM[addr];
 		if((addr>=0x8000)&&(addr<ramLastAddr)) return RAM[addr&0x7FFF]; // For any RAM size 
 		// keyboard column regs
-		return 0;
+		return 0xFF;
 	};
 
 	MK85CPU.writeCallback = function (addr, byteVal) {

@@ -36,6 +36,7 @@ function PANEL() {
 
     var ovl = (loadProperty('mk_overlay', false, true)) ? "checked" : "";
     var init = (loadProperty('mk_autoinit', true, true)) ? "checked" : "";
+    var fi32 = (loadProperty('mk_32kfix', true, true)) ? "checked" : "";
 
     var ign = ignoreFreqDiv ? "checked" : "";
     var ignp = ignorePowerOff ? "checked" : "";
@@ -62,22 +63,24 @@ function PANEL() {
             <input type="range" id="msiz" onChange="panelUpdNSz()" name="msiz" min="2" max="32" step="2"/>
             <button onClick="panelNewMem()">Set size</button><br>
             New size: <span id="nsz"></span>KB<br>
-            <label for="aini">Auto init:</label> <input type="checkbox" id="aini" name="aini" ${init}><br><br>
-            2KB - Standard MK85<br>6KB - Extended MK85M<br>32KB - Maximal value`;
+            <label for="aini">Auto init:</label> <input type="checkbox" id="aini" onChange="panelUpdNSz()" name="aini" ${init}>&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;<label for="32fi">32KB fix:</label> <input type="checkbox" id="32fi" name="32fi" ${fi32}><br><br>
+            2KB - Standard MK85<br>6KB - Extended MK85M<br>30KB - Max w/o 32KB fix<br>32KB - Maximal value`;
 
     tabcont[1][1] = `RAM file: <span id="rfi"></span><br><button onClick="panelSaveRaF()">Save RAM</button>
     <button onClick="panelGetRLS()">Get vars list</button> <button onClick="panelGetBAS()">Get programs</button><br>
     <button onClick="panelLoadRaF()">Load RAM from file</button>: <input type="file" id="ramf" name="ramf" accept=".bin"><br>
     <button onClick="panelLoadBAS()">Load program from file</button>: <input type="file" id="pbasf" name="pbasf" accept=".txt, .bas"><br><br>
-    ROM file: <span id="rofi"></span><br><button onClick="panelResetRoF()">Reset ROM</button><br>
+    ROM file: <span id="rofi"></span><br><button onClick="panelResetRoF(ROM_int, 'internal')">Reset ROM</button>
+    <button onClick="panelResetRoF(ROM_pol, 'internal (PL ROM v27B)')">Load PL ROM v27B</button><br>
     <button onClick="panelLoadRoF()">Load ROM from file</button>: <input type="file" id="romf" name="romf" accept=".bin">`;
 
     tabcont[2][0] = `<button onClick="panelOpenLay()">Keyboard layout</button> <button onClick="panelOpenCTool()">CHR96 code tool</button><br>
     <button onClick="panelOpenDbg()">Debugger</button>
     <button onClick="panelOpenHelp()">Help</button> <button onClick="panelOpenInfo()">About</button><br>
     <label for="iturb">Force turbo (ign. bit 3 in cpuctrl):</label> <input type="checkbox" onChange="panelSwTurIg()" id="iturb" name="iturb" ${forc}><br>
-    <label for="ifrdiv">Ignore frq. div. bit (11 in cpuctrl):</label> <input type="checkbox" onChange="panelSwDivIg()" id="ifrdiv" name="ifrdiv" ${ign}><br>
-    <label for="ipoff">Disable soft poweroff (12 in cpuctrl):</label> <input type="checkbox" onChange="panelSwDivPo()" id="ipoff" name="ifrdiv" ${ignp}><br>
+    <label for="ifrdiv">Ignore frq. div. (bit 11 in cpuctrl):</label> <input type="checkbox" onChange="panelSwDivIg()" id="ifrdiv" name="ifrdiv" ${ign}><br>
+    <label for="ipoff">Disable soft poff (bit 12 in cpuctrl):</label> <input type="checkbox" onChange="panelSwDivPo()" id="ipoff" name="ifrdiv" ${ignp}><br>
     <label for="dbgm">Show debug messages in console:</label> <input type="checkbox" onChange="panelSWDbgMsg()" id="dbgm" name="dbgm" ${dbgm}>`;
 
     tabcont[2][1] = `Speed: <span id="speedstat"></span><br>
@@ -128,6 +131,7 @@ function PANEL() {
         document.getElementById("rofi").innerText = romname;
         document.getElementById("cl0-0").innerHTML = `BASIC memory free: <span id=\"fbm\"></span> bytes<br>
         Allocated variables: <span id=\"avr\"> ( bytes)</span>`;
+
         panelUpdate();
     
         this.timer = setInterval(panelUpdate, 1000);
@@ -193,6 +197,7 @@ function panelLoadBAS() {
             var np = 0;
             var pnum = -1;
             var tstart = 0x22C;
+            var prevlin = 0;
 
             while (LINES.length > 0) {
                 var chkl = LINES[0].trim();
@@ -253,14 +258,15 @@ function panelLoadBAS() {
                     continue;
                 }
 
-                var status = bas_parser(PRGBUF, PRGPTR, trstr);
+                var status = bas_parser(PRGBUF, PRGPTR, trstr, prevlin);
 
-                if (typeof status[0] == "string") {
+                if (typeof status == "string") {
                     powerdev(`Failed to convert code at line ${strnum}: `+status);
                     return;
                 }
                 else {
-                    PRGPTR = status;
+                    PRGPTR = status[0];
+                    prevlin = status[1];
                 }
 
                 strnum++;
@@ -273,8 +279,7 @@ function panelLoadBAS() {
                 var topram = (((TRAM[0x253] & 0xFF) << 8) | (TRAM[0x252] & 0xFF));
                 var basend = (((TRAM[0x23F] & 0xFF) << 8) | (TRAM[0x23E] & 0xFF));
 
-                var free = new Uint16Array(1);
-                free[0] = topram-basend-(allocvars<<3);
+                var free = (topram-basend-(allocvars<<3)) & 0xFFFF;
 
                 if (free < PRGPTR) {
                     powerdev(`Not enough space to store program ${pnum}.\nClear some data or expand RAM image!`);
@@ -341,6 +346,8 @@ function panelGetBAS() {
     var b1 = 0;
     var b2;
     var offset = 0x026B;
+    var quot = false;
+    var comm = false; 
 
     for (let p = 0; p<10; p++) {
         if (prsta < bprogst[p]) {
@@ -363,35 +370,69 @@ function panelGetBAS() {
             if (b1 == 0)
             {
                 resf+="\n";
+                quot = false;
+                comm = false;
                 ps = 0;	/* line number expected */
             }
-            else if (b1 == 0x5C)
+            else if (b1 == 0x5C && (!(quot || comm)))
             {
                 resf+="!=";
             }
-            else if (b1 == 0x5E)
+            else if (b1 == 0x5E && (!(quot || comm)))
             {
                 resf+="^";
             }
-            else if (b1 == 0x5F)
+            else if (b1 == 0x5F && (!(quot || comm)))
             {
                 resf+="<=";        
             }
-            else if (b1 == 0x7B)
+            else if (b1 == 0x7B && (!(quot || comm)))
             {
                 resf+="E";
             }
-            else if (b1 == 0x7C)
+            else if (b1 == 0x7C && (!(quot || comm)))
             {
                 resf+="PI";
             }
-            else if (b1 == 0x7D)
+            else if (b1 == 0x7D && (!(quot || comm)))
             {
                 resf+="E-";
             }
-            else if (b1 == 0x7E)
+            else if (b1 == 0x7D)
+            {
+                resf+="ᵉ⁻";
+            }
+            else if (b1 == 0x7E && (!(quot || comm)))
             {
                 resf+=">=";
+            }
+            else if (b1 == 0x21) {
+                resf+="!";
+                comm = true;
+            }
+            else if (b1 == 0x22) {
+                if ((!quot) || (b2 != 0x60)) {
+                    resf+="\"";
+                }
+                quot = !quot;
+            }
+            else if (b1 == 0x60) {
+                if (b2 == 0x22) {
+                    resf = resf.slice(0, -1); 
+                }
+                else if (b2 == 0x60) {
+                    resf+= "+"
+                }
+                else {
+                    resf+= "\"+"
+                }
+                resf+="CHR 96"
+                if (quot) {
+                    var b3 = (RAM[offset+1] & 0xFF);
+                    if ((b3 != 0x22) && (b3 != 0x60)) {
+                        resf+= "+\""
+                    }
+                }
             }
             else if ((b1 < 0xC0) && (CCODES[b1] == "|"))
             {
@@ -407,7 +448,7 @@ function panelGetBAS() {
             }
             else
             {
-                resf+=`{${b1}}`;
+                resf+=`{0x${b1.toString(16)}}`;
             }
             break;
         }
@@ -487,17 +528,18 @@ function panelOpenCTool() {
 
 function panelOpenHelp() {
     window.open(`${BASEPATH}/help/help.html`,'85_helpWindow', `toolbar=no, location=no, status=no, menubar=no,
-        scrollbars=no, resizable=no, width=820, height=340`)
+        scrollbars=no, resizable=no, width=820, height=660`)
 }
 
 function panelOpenDbg() {
     const hidp = document.getElementById("mk85_dbg_int");
     hidp.style.display = (hidp.style.display == "none") ? "" : "none";
     document.getElementById("mk85_dbg_br").style.display = hidp.style.display;
-    if (hidp.style.display == "" && !stopped) {
+    var active = (!stopped && POWER);
+    if (hidp.style.display == "" && active) {
         DBG.debugStart();
     }
-    else if (hidp.style.display == "" && stopped) {
+    else if (hidp.style.display == "" && !active) {
         debugUpdate();
         debugUpdRegIn();
     }
@@ -535,6 +577,10 @@ function panelCalcRAM(){
     document.getElementById("msiz").value = rangval;
     document.getElementById("csz").innerText = rlen;
     document.getElementById("nsz").innerText = rangval;
+
+    if ((document.getElementById("aini").checked != true) || (rangval < 32)) {
+        document.getElementById("32fi").disabled = true;
+    }
 }
 
 function panelEditFocus() {
@@ -664,7 +710,7 @@ function panelUnStop() {
     stopped = false;
 }
 
-function panelResetRoF() {
+function panelResetRoF(rconst, name) {
     //PAN.panelStop();
     if (POWER) {
         LCD.stopAnimating();
@@ -674,12 +720,15 @@ function panelResetRoF() {
         }
     }
 
-    romname = "internal";
+    romname = name;
     window.localStorage.removeItem('mk_rom');
     window.localStorage.removeItem('mk_romname');
     document.getElementById("rofi").innerText = romname;
 
-    ROM = new Uint8Array(ROM_int); // Internal ROM image constant
+    usePlRom = (name == 'internal (PL ROM v27B)');
+    window.localStorage.setItem('mk_polrom', usePlRom);
+
+    ROM = new Uint8Array(rconst); // Internal ROM image constant (factory / piotr)
 
     if (POWER) {
         MK85CPU = new CPU();
@@ -698,14 +747,6 @@ function panelLoadRoF(){
     if (typeof romf == "undefined") {
         return;
     }
-    else if (romf.size > 32768) {  // 32KB max size
-		alert("File larger than expected, maximum memory size is 32KB");
-        return;
-	}
-	// else if (romf.size % 1024 != 0) {  // 1KB multiple
-	// 	alert("File must be a multiple of 1KB");
-    //     return;
-	// }
 
     const reader = new FileReader();
 
@@ -722,6 +763,18 @@ function panelLoadRoF(){
         }
 
         ROM = new Uint8Array(reader.result);
+
+        if (ROM.length > 32768) {  // 32KB max size
+            ROM = ROM.subarray(0, 32768);
+            console.log("Maximum ROM memory size is 32KB, memory area reduced");
+        }
+        else if (ROM.length % 8192 != 0) {  // Real processor uses a ROM chips multiple of 8KB min
+            var nROM = new Uint8Array((Math.floor(ROM.length / 8192)+1)*8192);
+            nROM.set(ROM);
+            ROM = nROM;
+            console.log(`The ROM size must be a multiple of 8KB, increasing the area to ${ROM.length / 1024}KB.`);
+        }
+
         romname = romf.name;
         window.localStorage.setItem('mk_rom', btoa(String.fromCharCode.apply(null, ROM)));
         window.localStorage.setItem('mk_romname', romname);
@@ -769,14 +822,6 @@ function panelLoadRaF() {
     if (typeof ramf == "undefined") {
         return;
     }
-    else if (ramf.size > 32768) {  // 32KB max size
-		alert("File larger than expected, maximum memory size is 32KB");
-        return;
-	}
-	// else if (ramf.size % 1024 != 0) {  // 1KB multiple
-	// 	alert("File must be a multiple of 1KB");
-    //     return;
-	// }
 
     const reader = new FileReader();
 
@@ -793,6 +838,18 @@ function panelLoadRaF() {
         }
 
         RAM = new Uint8Array(reader.result);
+
+        if (RAM.length > 32768) {  // 32KB max size
+            RAM = RAM.subarray(0, 32768);
+            console.log("Maximum RAM memory size is 32KB, memory area reduced");
+        }
+        else if (RAM.length % 2048 != 0) {  // Real processor uses a RAM chips multiple of 2KB min
+            var nRAM = new Uint8Array((Math.floor(RAM.length / 2048)+1)*2048);
+            nRAM.set(RAM);
+            RAM = nRAM;
+            console.log(`The RAM size must be a multiple of 2KB, increasing the area to ${RAM.length / 1024}KB.`);
+        }
+
         ramname = ramf.name;
         window.localStorage.setItem('mk_ram', btoa(String.fromCharCode.apply(null, RAM)));
         window.localStorage.setItem('mk_ramname', ramname);
@@ -888,7 +945,10 @@ function panelSwState(stat) {
 }
 
 function panelUpdNSz() {
-    document.getElementById("nsz").innerText= document.getElementById("msiz").value;
+    var msiz = document.getElementById("msiz").value
+    document.getElementById("nsz").innerText = msiz;
+    document.getElementById("32fi").disabled =
+        ((document.getElementById("aini").checked != true) || (msiz < 32)) ? true : false;
 }
 
 function panelNewMem(){
@@ -921,12 +981,26 @@ function panelNewMem(){
         startEmu();
         PAN.panelStart();
         ramAutoInit();
+        if ((document.getElementById("32fi").checked == true) && (nmemsiz == 32)){
+            setTimeout(function () {
+                RAM[0x252] = 0xFE;
+                RAM[0x253] = 0xFF;
+                window.localStorage.setItem('mk_ram', btoa(String.fromCharCode.apply(null, RAM)));
+            }, 200)
+        }
     }
     else if (POWER) {
         MK85CPU = new CPU();
         startEmu();
         if (document.getElementById("aini").checked == true){
             ramAutoInit();
+            if ((document.getElementById("32fi").checked == true) && (nmemsiz == 32)){
+                setTimeout(function () {
+                    RAM[0x252] = 0xFE;
+                    RAM[0x253] = 0xFF;
+                    window.localStorage.setItem('mk_ram', btoa(String.fromCharCode.apply(null, RAM)));
+                }, 200)
+            }
         }
         panelUpdate();
         if (document.getElementById("mk85_dbg_int").style.display == "") {
@@ -942,10 +1016,7 @@ function panelUpdate(){
     var topram = (((RAM[0x253] & 0xFF) << 8) | (RAM[0x252] & 0xFF));
     var basend = (((RAM[0x23F] & 0xFF) << 8) | (RAM[0x23E] & 0xFF));
 
-    var uans = new Uint16Array(1);
-    uans[0] = topram-basend-(allocvars<<3);
-
-    document.getElementById("fbm").innerText= uans[0];
+    document.getElementById("fbm").innerText= (topram-basend-(allocvars<<3) & 0xFFFF);
     document.getElementById("avr").innerText= `${allocvars} (${allocvars<<3} bytes)`;
 
     document.getElementById("speedstat").innerText=

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>JS85EMU Help</title>
+<meta charset="UTF-8">
+<style>
+    body {text-align: center;}
+
+    .menulink {
+        padding-left: 10px;
+        padding-right: 10px;
+        font-weight: bold;
+    }
+</style>
+</head>
+<body>
+
+<h1>JS85EMU Help</h1>
+
+<h3><a href="faq_ru.html">Русский</a></h3>
+
+<hr>
+<h3 style="margin-top: 5px;margin-bottom: 5px;">Menu</h3>
+<a class="menulink" href="help.html">Main page</a>
+<a class="menulink" href="interface.html">Emulator interface</a><br>
+<a class="menulink" href="panel.html">Working with the options panel</a>
+<a class="menulink" href="debug.html">Working with the Debugger</a>
+<a class="menulink" href="chr96.html">Working with the CHR96 utility</a><br>
+<a class="menulink" href="conv.html">Working with BASIC data converters</a><br>
+<span class="menulink">Frequently asked questions (FAQ)</span>
+<hr>
+
+<h3>Frequently asked questions (FAQ)</h3>
+
+<p style="text-align: left;">
+    &nbsp;&nbsp;&nbsp;&nbsp;<b>Q:</b> How to use the microcomputer? Can not understand anything!<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<b>A:</b> Read the <a href="http://mk.bs0dd.net/mk85/mk85man.pdf" target="_blank"><b>manual</b></a> for the MK 85,
+    it explains the principles of operation of the device software and provides examples of BASIC programs.
+    Unfortunately, there is only a Russian version of the manual, which makes it difficult for foreign users to understand.
+    The translation of images does not provide 100% accuracy, so for simplicity,
+    you can also study the manual of the "prototype" device - <a href="http://mk.bs0dd.net/mk85/fX700p.pdf"><b>Casio FX-700P</b></a>.
+    Although the MK85 has additional commands and some differences in the operation of existing ones,
+    most of the MK85 documentation is clearly borrowed from the FX-700P documentation. 
+</p>
+
+<img src="manual.jpg" alt="manual" height="300px"><br><br>
+
+<p style="text-align: left;">
+    &nbsp;&nbsp;&nbsp;&nbsp;<b>Q:</b> Why does the microcomputer show that 0 bytes of memory are free, although no programs have been loaded into it?<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<b>A:</b> You probably created a new RAM image, but it was not initialized (recording initial settings),
+    which is usually done by default if the "Auto init" option is selected. For manual initialization, just press the "initial settings" key.
+</p>
+<img src="noninit.png" alt="noninit"><br><br>
+
+<p style="text-align: left;">
+    &nbsp;&nbsp;&nbsp;&nbsp;<b>Q:</b> Why does the number on the seven-segment indicators look distorted in WRT mode?<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<b>A:</b> If the microcomputer has more than 9999 bytes of free space,
+    the firmware cannot adequately display the number. Use the free BASIC memory indicator on the options panel.
+</p>
+<img src="invfr.png" alt="invfr"><br>
+<img src="invfrt.png" alt="invfrt"><br><br>
+
+<p style="text-align: left;">
+    &nbsp;&nbsp;&nbsp;&nbsp;<b>Q:</b> Why does ERR6 always occur when trying to access a variable via a number (for example A(3) instead of D)?<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<b>A:</b> Apparently, 32KB of RAM was chosen for the microcomputer. Unfortunately, the factory ROM starts to work incorrectly with such a large size,
+    but the emulator has a fix ("32KB fix") that solves this problem (at the cost of losing only 2 bytes of free memory).
+</p><br>
+
+<p style="text-align: left;">
+    &nbsp;&nbsp;&nbsp;&nbsp;<b>Q:</b> Why in a BASIC program, when trying to return from a subroutine (RETURN), does an incomprehensible error occur in a non-existent line?<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<b>A:</b> It seems that the subroutine have the LETC command, which, unfortunately, corrupts the return stack (firmware bug),
+    so it is impossible to return from the subroutine after it. You will have to change the program structure without LETC in the subroutines.
+</p><br>
+
+<p style="text-align: left;">
+    &nbsp;&nbsp;&nbsp;&nbsp;<b>Q:</b> Why does the microcomputer turn off (both real and virtual) if I press the STOP key 21 times?<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<b>A:</b> The STOP key, when pressed, always causes a switching to HALT mode and execution of a HALT interrupt.
+    For this reason, apparently, there are no handler for this key in the system for detecting the pressed key.
+    This system has a counter that counts the number of unsuccessful attempts to identify a key (resets upon the first successful identification).
+    Since the STOP key is considered "unknown", then after 21 presses (and, accordingly, 21 "failed" attempts to identify the key),
+    the firmware believes that strange things are happening with the microcomputer and sends a signal to turn it off.
+    In the emulator, as in the real device, a software switch is implemented (only in the virtual microcomputer, after operation,
+    for convenience, the power switch is automatically flipped), so the device turns off.
+</p><br>
+
+<p style="text-align: left;">
+    &nbsp;&nbsp;&nbsp;&nbsp;<b>Q:</b> What is "PL ROM" and what is it for?<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<b>A:</b> This is a modified version of factory ROM created by Piotr Piątek (version 27 BETA from 17.11.2010).
+    The firmware contains a number of innovations, including new BASIC commands,
+    expansion of the functionality of existing ones and support for data exchange interfaces
+    (although they require hardware modification, so they are not supported in the emulator).
+    More details about this firmware can be found on the
+    archive version of the <a href="https://web.archive.org/web/20150828094341/http://mk85.republika.pl/rom.html" target="_blank"><b>site</b></a> (Polish language).
+</p><br>
+
+<p style="text-align: left;">
+    &nbsp;&nbsp;&nbsp;&nbsp;<b>Q:</b> Why is there no emulation of the MK 85B (85Б) and MK 85C models?<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<b>A:</b> Unfortunately, these are quite rare variations of the MK 85, so today no one has dumped the ROM contents of these models.
+    But if you will have one, you can load it into the emulator and most likely the firmware will work
+    (but there may be problems if it uses processor operations that have not yet been tested for correct implementation).
+    Of course, emulator elements associated with the BASIC system will not work.
+</p><br>
+
+<p style="text-align: left;">
+    &nbsp;&nbsp;&nbsp;&nbsp;<b>Q:</b> Is it possible in the future to emulate a prototype version of MK 85?<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<b>A:</b> Unfortunately, due to the slightly different design of the prototype,
+    even if a dump of the prototype firmware appears on the network, the emulator most likely will not be able to work normally with it.
+    Some minor reworking of some emulator components may be required.
+</p>
+
+<hr>
+<h3 style="margin-top: 5px;margin-bottom: 5px;">Menu</h3>
+<a class="menulink" href="help.html">Main page</a>
+<a class="menulink" href="interface.html">Emulator interface</a><br>
+<a class="menulink" href="panel.html">Working with the options panel</a>
+<a class="menulink" href="debug.html">Working with the Debugger</a>
+<a class="menulink" href="chr96.html">Working with the CHR96 utility</a><br>
+<a class="menulink" href="conv.html">Working with BASIC data converters</a><br>
+<span class="menulink">Frequently asked questions (FAQ)</span>
+<hr>
+
+</body>
+</html> 

@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>JS85EMU Help</title>
+<meta charset="UTF-8">
+<style>
+    body {text-align: center;}
+
+    .menulink {
+        padding-left: 10px;
+        padding-right: 10px;
+        font-weight: bold;
+    }
+
+    .una {
+        color: darkred;
+    }
+
+    #soot {
+        border: 1px solid black;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    #soot th, #soot td {
+        border: 1px solid black;
+        padding-top: 5px;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+</style>
+</head>
+<body>
+
+<h1>JS85EMU Help</h1>
+
+<h3><a href="conv_ru.html">Русский</a></h3>
+
+<hr>
+<h3 style="margin-top: 5px;margin-bottom: 5px;">Menu</h3>
+<a class="menulink" href="help.html">Main page</a>
+<a class="menulink" href="interface.html">Emulator interface</a><br>
+<a class="menulink" href="panel.html">Working with the options panel</a>
+<a class="menulink" href="debug.html">Working with the Debugger</a>
+<a class="menulink" href="chr96.html">Working with the CHR96 utility</a><br>
+<span class="menulink">Working with BASIC data converters</span><br>
+<a class="menulink" href="faq.html">Frequently asked questions (FAQ)</a>
+<hr>
+
+<h3>BASIC data converters (in the data loading and saving section)</h3>
+
+<img src="p4c.png" alt="p4c"><br>
+ 
+<p style="text-align: left;">
+    &nbsp;&nbsp;&nbsp;&nbsp;The <b>allocated variables</b> and <b>programs</b> are stored in the microcomputer's <b>RAM</b> in a <b>proprietary format</b>.
+    Therefore, <b>BASIC data converters</b> are used to <b>obtain</b> this data in a <b>readable</b> text format and load it <b>back</b>.<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;The emulator has <b>three</b> converters:
+</p><br>
+
+<h4>Allocated variables converter</h4>
+
+<img src="varsl.png" alt="varsl"><br>
+<i>example contents of the file <b>"mk85_vars.txt"</b></i>
+
+<p style="text-align: left;">
+    &nbsp;&nbsp;&nbsp;&nbsp;This converter allows you to <b>get</b> a list of all <b>allocated variables</b>
+    (by default there are <b>26</b> of them (from <b>A</b> to <b>Z</b>) plus a special text variable <b>$</b>), whose values ​​are <b>not equal to zero</b>.
+    When you click on the <b>"Get vars list"</b> button, the file <b>"mk85_vars.txt"</b> is saved to disk, an example of which is seen <b>above</b>.
+    If the number of allocated variables is <b>more than 26</b>, the variables following <b>Z</b>, according to the <b>documentation</b>, are referred to as <b>Z(<i>number</i>)</b>.<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;To display <b>specific characters</b> from the <b>MK 85</b> code page, <b>analogous</b> or <b>similar</b> in style <b>Unicode characters</b> are used,
+    so some of them <b>may not display correctly</b> in your text editor.<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;A table of <b>relation</b> between <b>Unicode</b> and <b>MK 85</b> characters is presented at the <b>bottom</b> of the page.
+</p><br>
+
+<h4>BASIC programs to text code converter</h4>
+
+<img src="bascode.png" alt="bascode"><br>
+<i>example contents of the file <b>"mk85_programs.txt"</b></i>
+
+<p style="text-align: left;">
+    &nbsp;&nbsp;&nbsp;&nbsp;This converter is designed to <b>receive</b> programs stored in <b>RAM</b> in the form of <b>text code</b> (a.k.a. <b>listing</b>).
+    The <b>"Get programs"</b> button saves the file <b>"mk85_programs.txt"</b> to disk, an example of which is also given <b>above</b>.
+    The ability to <b>save</b> listings allows you to <b>edit</b> programs using a regular <b>text editor</b>,
+    as well as simply <b>publish</b> them for others to <b>load</b> into an emulator or <b>retype</b> onto a real device.
+    Before the <b>beginning of the code</b> of each program, its <b>number</b> (<b>0-9</b>) in the memory of the virtual microcomputer is indicated.
+    <b>Unicode</b> is used to display <b>specific characters</b>, however, for <b>ease of editing</b>, some characters (only <b>outside the quotes</b>) are replaced with <b>equivalents</b>,
+    for example <b>'↑'</b> with <b>'^'</b>, <b>'≤'</b> with <b>'&lt;='</b>, <b>'≥'</b> with <b>'&gt;='</b>,
+    <b>'π'</b> with <b>'PI'</b>, <b>'≠'</b> with <b>'!='</b>, and only in numbers <b>'ᵉ'</b> with <b>'E'</b> and <b>'ᵉ⁻'</b> with <b>'E-'</b>.
+</p><br>
+
+<h4>Text BASIC code into programs converter</h4>
+
+<img src="bascodei.png" alt="bascodei"><br>
+<i>example of the contents of a file with programs</i>
+
+<p style="text-align: left;">
+    &nbsp;&nbsp;&nbsp;&nbsp;Since programs can be <b>downloaded</b> from memory,
+    it is logical to have a <b>vice versa</b> thing for <b>loading</b> text code (<b>listing</b>) into a virtual microcomputer.
+    For this purpose, there is a <b>"Load program from file"</b> button and a corresponding <b>file selection field</b>.<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;The file can contain from <b>1</b> to <b>10</b> programs, separated from each other by <b>two blank lines</b>.
+    Before starting each program, you can specify its number in the format <b>"Program <i>*</i>"</b>, where <b><i>*</i></b> is a number from <b>0</b> to <b>9</b>
+    (if the cell is <b>occupied</b>, the conversion will be <b>interrupted</b>).
+    Otherwise, the program will be loaded into the first free cell.<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;Lines that <b>do not begin</b> with their number are considered as <b>comments</b> and are <b>ignored</b> during conversion.
+    <b>Commands</b> and <b>variables</b> can be entered in <b>any</b> case
+    (but during conversion they will be converted to <b>standard</b> microcomputer <b>upper</b> case, i.e. <b>"print a$;" => "PRINT A$;"</b>).
+    For <b>convenience</b>, some characters (only <b>outside quotes</b>) can be replaced with <b>equivalents</b>,
+    for example <b>'↑'</b> with <b>'^'</b>, <b>'≤'</b> with <b>'&lt;='</b> or <b>'=&lt;'</b>, <b>'≥'</b> with <b>'&gt;='</b> or <b>'=&gt;'</b>,
+    <b>'π'</b> with <b>'PI'</b>, <b>'≠'</b> with <b>'!='</b> or <b>'&gt;&lt;'</b> or <b>'&lt;&gt;'</b>, and only in numbers <b>'ᵉ'</b> with <b>'E'</b> and <b>'ᵉ⁻'</b> with <b>'E-'</b>.<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;If the <b>conversion</b> of all programs is completed <b>successfully</b>,
+    a <b>notification</b> will appear with the <b>number</b> of processed programs and the <b>numbers of the cells</b> in which they were <b>saved</b>.
+    If an <b>error</b> occurs, the conversion will be <b>interrupted</b> and the notification will indicate the <b>reason for the error</b>
+    (along with the <b>line number</b> in the file), as well as the number of processed <b>before this</b> programs and their cell <b>numbers</b>.
+</p><br>
+
+<h4>Table of relation between MK 85 and Unicode characters <br>
+<i style="font-size: 15px;font-weight: normal;">click on a character to copy it</i></h4>
+
+
+<table id="soot">
+    <tr><th></th><th>x0</th><th>x1</th><th>x2</th><th>x3</th><th>x4</th><th>x5</th><th>x6</th><th>x7</th><th>x8</th><th>x9</th><th>xA</th><th>xB</th><th>xC</th><th>xD</th><th>xE</th><th>xF</th></tr>
+    <tr><th>0x</th><td></td>
+        <td class="una" onclick="copyc(this, '🮟');"><img src="sym/01.png" alt="01"><br>🮟</td> <td class="una" onclick="copyc(this, '🮞');"><img src="sym/02.png" alt="02"><br>🮞</td>
+        <td class="una" onclick="copyc(this, '🮝');"><img src="sym/03.png" alt="03"><br>🮝</td> <td class="una" onclick="copyc(this, '🮜');"><img src="sym/04.png" alt="04"><br>🮜</td>
+        <td class="una" onclick="copyc(this, '🮚');"><img src="sym/05.png" alt="05"><br>🮚</td> <td class="una" onclick="copyc(this, '🮛');"><img src="sym/06.png" alt="06"><br>🮛</td>
+        <td class="una" onclick="copyc(this, '{');"><img src="sym/07.png" alt="07"><br>{</td> <td class="una" onclick="copyc(this, '}');"><img src="sym/08.png" alt="08"><br>}</td>
+        <td class="una" onclick="copyc(this, 'Ø');"><img src="sym/09.png" alt="09"><br>Ø</td> <td class="una" onclick="copyc(this, '…');"><img src="sym/0a.png" alt="0a"><br>…</td>
+        <td onclick="copyc(this, '○');"><img src="sym/0b.png" alt="0b"><br>○</td> <td onclick="copyc(this, '∑');"><img src="sym/0c.png" alt="0c"><br>∑</td>
+        <td onclick="copyc(this, '°');"><img src="sym/0d.png" alt="0d"><br>°</td> <td onclick="copyc(this, '△');"><img src="sym/0e.png" alt="0e"><br>△</td>
+        <td onclick="copyc(this, '_');"><img src="sym/0f.png" alt="0f"><br>_</td>
+    </tr>
+    <tr><th>1x</th><td onclick="copyc(this, '×');"><img src="sym/10.png" alt="10"><br>×</td>
+        <td onclick="copyc(this, '÷');"><img src="sym/11.png" alt="11"><br>÷</td> <td onclick="copyc(this, '♠');"><img src="sym/12.png" alt="12"><br>♠</td>
+        <td onclick="copyc(this, '♥');"><img src="sym/13.png" alt="13"><br>♥</td> <td onclick="copyc(this, '♦');"><img src="sym/14.png" alt="14"><br>♦</td>
+        <td onclick="copyc(this, '♣');"><img src="sym/15.png" alt="15"><br>♣</td> <td onclick="copyc(this, 'μ');"><img src="sym/16.png" alt="16"><br>μ</td>
+        <td onclick="copyc(this, 'Ω');"><img src="sym/17.png" alt="17"><br>Ω</td> <td onclick="copyc(this, '↓');"><img src="sym/18.png" alt="18"><br>↓</td>
+        <td onclick="copyc(this, '←');"><img src="sym/19.png" alt="19"><br>←</td> <td onclick="copyc(this, '→');"><img src="sym/1a.png" alt="1a"><br>→</td>
+        <td onclick="copyc(this, '¥');"><img src="sym/1b.png" alt="1b"><br>¥</td> <td onclick="copyc(this, '□');"><img src="sym/1c.png" alt="1c"><br>□</td>
+        <td onclick="copyc(this, '·');"><img src="sym/1d.png" alt="1d"><br>·</td> <td onclick="copyc(this, 'Ъ');"><img src="sym/1e.png" alt="1e"><br>Ъ</td>
+        <td onclick="copyc(this, 'ъ');"><img src="sym/1f.png" alt="1f"><br>ъ</td>
+    </tr>
+    <tr><th>2x</th><td onclick="copyc(this, ' ');"><img src="sym/20.png" alt="20"><br>&nbsp;</td>
+        <td onclick="copyc(this, '!');"><img src="sym/21.png" alt="21"><br>!</td> <td onclick="copyc(this, '&#34;');"><img src="sym/22.png" alt="22"><br>"</td>
+        <td onclick="copyc(this, '#');"><img src="sym/23.png" alt="23"><br>#</td> <td onclick="copyc(this, '$');"><img src="sym/24.png" alt="24"><br>$</td>
+        <td onclick="copyc(this, '%');"><img src="sym/25.png" alt="25"><br>%</td> <td onclick="copyc(this, '&');"><img src="sym/26.png" alt="26"><br>&</td>
+        <td onclick="copyc(this, '\'');"><img src="sym/27.png" alt="27"><br>'</td> <td onclick="copyc(this, '(');"><img src="sym/28.png" alt="28"><br>(</td>
+        <td onclick="copyc(this, ')');"><img src="sym/29.png" alt="29"><br>)</td> <td onclick="copyc(this, '*');"><img src="sym/2a.png" alt="2a"><br>*</td>
+        <td onclick="copyc(this, '+');"><img src="sym/2b.png" alt="2b"><br>+</td> <td onclick="copyc(this, ',');"><img src="sym/2c.png" alt="2c"><br>,</td>
+        <td onclick="copyc(this, '-');"><img src="sym/2d.png" alt="2d"><br>-</td> <td onclick="copyc(this, '.');"><img src="sym/2e.png" alt="2e"><br>.</td>
+        <td onclick="copyc(this, '/');"><img src="sym/2f.png" alt="2f"><br>/</td>
+    </tr>
+    <tr><th>3x</th><td onclick="copyc(this, '0');"><img src="sym/30.png" alt="30"><br>0</td>
+        <td onclick="copyc(this, '1');"><img src="sym/31.png" alt="31"><br>1</td> <td onclick="copyc(this, '2');"><img src="sym/32.png" alt="32"><br>2</td>
+        <td onclick="copyc(this, '3');"><img src="sym/33.png" alt="33"><br>3</td> <td onclick="copyc(this, '4');"><img src="sym/34.png" alt="34"><br>4</td>
+        <td onclick="copyc(this, '5');"><img src="sym/35.png" alt="35"><br>5</td> <td onclick="copyc(this, '6');"><img src="sym/36.png" alt="36"><br>6</td>
+        <td onclick="copyc(this, '7');"><img src="sym/37.png" alt="37"><br>7</td> <td onclick="copyc(this, '8');"><img src="sym/38.png" alt="38"><br>8</td>
+        <td onclick="copyc(this, '9');"><img src="sym/39.png" alt="39"><br>9</td> <td onclick="copyc(this, ':');"><img src="sym/3a.png" alt="3a"><br>:</td>
+        <td onclick="copyc(this, ';');"><img src="sym/3b.png" alt="3b"><br>;</td> <td onclick="copyc(this, '<');"><img src="sym/3c.png" alt="3c"><br>&lt;</td>
+        <td onclick="copyc(this, '=');"><img src="sym/3d.png" alt="3d"><br>=</td> <td onclick="copyc(this, '>');"><img src="sym/3e.png" alt="3e"><br>&gt;</td>
+        <td onclick="copyc(this, '?');"><img src="sym/3f.png" alt="3f"><br>?</td>
+    </tr>
+    <tr><th>4x</th><td onclick="copyc(this, '@');"><img src="sym/40.png" alt="40"><br>@</td>
+        <td onclick="copyc(this, 'A');"><img src="sym/41.png" alt="41"><br>A</td> <td onclick="copyc(this, 'B');"><img src="sym/42.png" alt="42"><br>B</td>
+        <td onclick="copyc(this, 'C');"><img src="sym/43.png" alt="43"><br>C</td> <td onclick="copyc(this, 'D');"><img src="sym/44.png" alt="44"><br>D</td>
+        <td onclick="copyc(this, 'E');"><img src="sym/45.png" alt="45"><br>E</td> <td onclick="copyc(this, 'F');"><img src="sym/46.png" alt="46"><br>F</td>
+        <td onclick="copyc(this, 'G');"><img src="sym/47.png" alt="47"><br>G</td> <td onclick="copyc(this, 'H');"><img src="sym/48.png" alt="48"><br>H</td>
+        <td onclick="copyc(this, 'I');"><img src="sym/49.png" alt="49"><br>I</td> <td onclick="copyc(this, 'J');"><img src="sym/4a.png" alt="4a"><br>J</td>
+        <td onclick="copyc(this, 'K');"><img src="sym/4b.png" alt="4b"><br>K</td> <td onclick="copyc(this, 'L');"><img src="sym/4c.png" alt="4c"><br>L</td>
+        <td onclick="copyc(this, 'M');"><img src="sym/4d.png" alt="4d"><br>M</td> <td onclick="copyc(this, 'N');"><img src="sym/4e.png" alt="4e"><br>N</td>
+        <td onclick="copyc(this, 'O');"><img src="sym/4f.png" alt="4f"><br>O</td>
+    </tr>
+    <tr><th>5x</th><td onclick="copyc(this, 'P');"><img src="sym/50.png" alt="50"><br>P</td>
+        <td onclick="copyc(this, 'Q');"><img src="sym/51.png" alt="51"><br>Q</td> <td onclick="copyc(this, 'R');"><img src="sym/52.png" alt="52"><br>R</td>
+        <td onclick="copyc(this, 'S');"><img src="sym/53.png" alt="53"><br>S</td> <td onclick="copyc(this, 'T');"><img src="sym/54.png" alt="54"><br>T</td>
+        <td onclick="copyc(this, 'U');"><img src="sym/55.png" alt="55"><br>U</td> <td onclick="copyc(this, 'V');"><img src="sym/56.png" alt="56"><br>V</td>
+        <td onclick="copyc(this, 'W');"><img src="sym/57.png" alt="57"><br>W</td> <td onclick="copyc(this, 'X');"><img src="sym/58.png" alt="58"><br>X</td>
+        <td onclick="copyc(this, 'Y');"><img src="sym/59.png" alt="59"><br>Y</td> <td onclick="copyc(this, 'Z');"><img src="sym/5a.png" alt="5a"><br>Z</td>
+        <td onclick="copyc(this, '[');"><img src="sym/5b.png" alt="5b"><br>[</td> <td onclick="copyc(this, '≠');"><img src="sym/5c.png" alt="5c"><br>≠</td>
+        <td onclick="copyc(this, ']');"><img src="sym/5d.png" alt="5d"><br>]</td> <td onclick="copyc(this, '↑');"><img src="sym/5e.png" alt="5e"><br>↑</td>
+        <td onclick="copyc(this, '≤');"><img src="sym/5f.png" alt="5f"><br>≤</td>
+    </tr>
+    <tr><th>6x</th><td></td>
+        <td onclick="copyc(this, 'a');"><img src="sym/61.png" alt="61"><br>a</td> <td onclick="copyc(this, 'b');"><img src="sym/62.png" alt="62"><br>b</td>
+        <td onclick="copyc(this, 'c');"><img src="sym/63.png" alt="63"><br>c</td> <td onclick="copyc(this, 'd');"><img src="sym/64.png" alt="64"><br>d</td>
+        <td onclick="copyc(this, 'e');"><img src="sym/65.png" alt="65"><br>e</td> <td onclick="copyc(this, 'f');"><img src="sym/66.png" alt="66"><br>f</td>
+        <td onclick="copyc(this, 'g');"><img src="sym/67.png" alt="67"><br>g</td> <td onclick="copyc(this, 'h');"><img src="sym/68.png" alt="68"><br>h</td>
+        <td onclick="copyc(this, 'i');"><img src="sym/69.png" alt="69"><br>i</td> <td onclick="copyc(this, 'j');"><img src="sym/6a.png" alt="6a"><br>j</td>
+        <td onclick="copyc(this, 'k');"><img src="sym/6b.png" alt="6b"><br>k</td> <td onclick="copyc(this, 'l');"><img src="sym/6c.png" alt="6c"><br>l</td>
+        <td onclick="copyc(this, 'm');"><img src="sym/6d.png" alt="6d"><br>m</td> <td onclick="copyc(this, 'n');"><img src="sym/6e.png" alt="6e"><br>n</td>
+        <td onclick="copyc(this, 'o');"><img src="sym/6f.png" alt="6f"><br>o</td>
+    </tr>
+    <tr><th>7x</th><td onclick="copyc(this, 'p');"><img src="sym/70.png" alt="70"><br>p</td>
+        <td onclick="copyc(this, 'q');"><img src="sym/71.png" alt="71"><br>q</td> <td onclick="copyc(this, 'r');"><img src="sym/72.png" alt="72"><br>r</td>
+        <td onclick="copyc(this, 's');"><img src="sym/73.png" alt="73"><br>s</td> <td onclick="copyc(this, 't');"><img src="sym/74.png" alt="74"><br>t</td>
+        <td onclick="copyc(this, 'u');"><img src="sym/75.png" alt="75"><br>u</td> <td onclick="copyc(this, 'v');"><img src="sym/76.png" alt="76"><br>v</td>
+        <td onclick="copyc(this, 'w');"><img src="sym/77.png" alt="77"><br>w</td> <td onclick="copyc(this, 'x');"><img src="sym/78.png" alt="78"><br>x</td>
+        <td onclick="copyc(this, 'y');"><img src="sym/79.png" alt="79"><br>y</td> <td onclick="copyc(this, 'z');"><img src="sym/7a.png" alt="7a"><br>z</td>
+        <td onclick="copyc(this, 'ᵉ');"><img src="sym/7b.png" alt="7b"><br>ᵉ</td> <td onclick="copyc(this, 'π');"><img src="sym/7c.png" alt="7c"><br>π</td>
+        <td onclick="copyc(this, 'ᵉ⁻');"><img src="sym/7d.png" alt="7d"><br>ᵉ⁻</td> <td onclick="copyc(this, '≥');"><img src="sym/7e.png" alt="7e"><br>≥</td>
+        <td onclick="copyc(this, '█');"><img src="sym/7f.png" alt="7f"><br>█</td>
+    </tr>
+    <tr><th>8x</th><td onclick="copyc(this, 'ю');"><img src="sym/80.png" alt="80"><br>ю</td>
+        <td onclick="copyc(this, 'а');"><img src="sym/81.png" alt="81"><br>а</td> <td onclick="copyc(this, 'б');"><img src="sym/82.png" alt="82"><br>б</td>
+        <td onclick="copyc(this, 'ц');"><img src="sym/83.png" alt="83"><br>ц</td> <td onclick="copyc(this, 'д');"><img src="sym/84.png" alt="84"><br>д</td>
+        <td onclick="copyc(this, 'е');"><img src="sym/85.png" alt="85"><br>е</td> <td onclick="copyc(this, 'ф');"><img src="sym/86.png" alt="86"><br>ф</td>
+        <td onclick="copyc(this, 'г');"><img src="sym/87.png" alt="87"><br>г</td> <td onclick="copyc(this, 'х');"><img src="sym/88.png" alt="88"><br>х</td>
+        <td onclick="copyc(this, 'и');"><img src="sym/89.png" alt="89"><br>и</td> <td onclick="copyc(this, 'й');"><img src="sym/8a.png" alt="8a"><br>й</td>
+        <td onclick="copyc(this, 'к');"><img src="sym/8b.png" alt="8b"><br>к</td> <td onclick="copyc(this, 'л');"><img src="sym/8c.png" alt="8c"><br>л</td>
+        <td onclick="copyc(this, 'м');"><img src="sym/8d.png" alt="8d"><br>м</td> <td onclick="copyc(this, 'н');"><img src="sym/8e.png" alt="8e"><br>н</td>
+        <td onclick="copyc(this, 'о');"><img src="sym/8f.png" alt="8f"><br>о</td>
+    </tr>
+    <tr><th>9x</th><td onclick="copyc(this, 'п');"><img src="sym/90.png" alt="90"><br>п</td>
+        <td onclick="copyc(this, 'я');"><img src="sym/91.png" alt="91"><br>я</td> <td onclick="copyc(this, 'р');"><img src="sym/92.png" alt="92"><br>р</td>
+        <td onclick="copyc(this, 'с');"><img src="sym/93.png" alt="93"><br>с</td> <td onclick="copyc(this, 'т');"><img src="sym/94.png" alt="94"><br>т</td>
+        <td onclick="copyc(this, 'у');"><img src="sym/95.png" alt="95"><br>у</td> <td onclick="copyc(this, 'ж');"><img src="sym/96.png" alt="96"><br>ж</td>
+        <td onclick="copyc(this, 'в');"><img src="sym/97.png" alt="97"><br>в</td> <td onclick="copyc(this, 'ь');"><img src="sym/98.png" alt="98"><br>ь</td>
+        <td onclick="copyc(this, 'ы');"><img src="sym/99.png" alt="99"><br>ы</td> <td onclick="copyc(this, 'з');"><img src="sym/9a.png" alt="9a"><br>з</td>
+        <td onclick="copyc(this, 'ш');"><img src="sym/9b.png" alt="9b"><br>ш</td> <td onclick="copyc(this, 'э');"><img src="sym/9c.png" alt="9c"><br>э</td>
+        <td onclick="copyc(this, 'щ');"><img src="sym/9d.png" alt="9d"><br>щ</td> <td onclick="copyc(this, 'ч');"><img src="sym/9e.png" alt="9e"><br>ч</td>
+        <td onclick="copyc(this, 'ё');"><img src="sym/9f.png" alt="9f"><br>ё</td>
+    </tr>
+    <tr><th>Ax</th><td onclick="copyc(this, 'Ю');"><img src="sym/a0.png" alt="a0"><br>Ю</td>
+        <td onclick="copyc(this, 'А');"><img src="sym/a1.png" alt="a1"><br>А</td> <td onclick="copyc(this, 'Б');"><img src="sym/a2.png" alt="a2"><br>Б</td>
+        <td onclick="copyc(this, 'Ц');"><img src="sym/a3.png" alt="a3"><br>Ц</td> <td onclick="copyc(this, 'Д');"><img src="sym/a4.png" alt="a4"><br>Д</td>
+        <td onclick="copyc(this, 'Е');"><img src="sym/a5.png" alt="a5"><br>Е</td> <td onclick="copyc(this, 'Ф');"><img src="sym/a6.png" alt="a6"><br>Ф</td>
+        <td onclick="copyc(this, 'Г');"><img src="sym/a7.png" alt="a7"><br>Г</td> <td onclick="copyc(this, 'Х');"><img src="sym/a8.png" alt="a8"><br>Х</td>
+        <td onclick="copyc(this, 'И');"><img src="sym/a9.png" alt="a9"><br>И</td> <td onclick="copyc(this, 'Й');"><img src="sym/aa.png" alt="aa"><br>Й</td>
+        <td onclick="copyc(this, 'К');"><img src="sym/ab.png" alt="ab"><br>К</td> <td onclick="copyc(this, 'Л');"><img src="sym/ac.png" alt="ac"><br>Л</td>
+        <td onclick="copyc(this, 'М');"><img src="sym/ad.png" alt="ad"><br>М</td> <td onclick="copyc(this, 'Н');"><img src="sym/ae.png" alt="ae"><br>Н</td>
+        <td onclick="copyc(this, 'О');"><img src="sym/af.png" alt="af"><br>О</td>
+    </tr>
+    <tr><th>Bx</th><td onclick="copyc(this, 'П');"><img src="sym/b0.png" alt="b0"><br>П</td>
+        <td onclick="copyc(this, 'Я');"><img src="sym/b1.png" alt="b1"><br>Я</td> <td onclick="copyc(this, 'Р');"><img src="sym/b2.png" alt="b2"><br>Р</td>
+        <td onclick="copyc(this, 'С');"><img src="sym/b3.png" alt="b3"><br>С</td> <td onclick="copyc(this, 'Т');"><img src="sym/b4.png" alt="b4"><br>Т</td>
+        <td onclick="copyc(this, 'У');"><img src="sym/b5.png" alt="b5"><br>У</td> <td onclick="copyc(this, 'Ж');"><img src="sym/b6.png" alt="b6"><br>Ж</td>
+        <td onclick="copyc(this, 'В');"><img src="sym/b7.png" alt="b7"><br>В</td> <td onclick="copyc(this, 'Ь');"><img src="sym/b8.png" alt="b8"><br>Ь</td>
+        <td onclick="copyc(this, 'Ы');"><img src="sym/b9.png" alt="b9"><br>Ы</td> <td onclick="copyc(this, 'З');"><img src="sym/ba.png" alt="ba"><br>З</td>
+        <td onclick="copyc(this, 'Ш');"><img src="sym/bb.png" alt="bb"><br>Ш</td> <td onclick="copyc(this, 'Э');"><img src="sym/bc.png" alt="bc"><br>Э</td>
+        <td onclick="copyc(this, 'Щ');"><img src="sym/bd.png" alt="bd"><br>Щ</td> <td onclick="copyc(this, 'Ч');"><img src="sym/be.png" alt="be"><br>Ч</td>
+        <td onclick="copyc(this, 'Ё');"><img src="sym/bf.png" alt="bf"><br>Ё</td>
+    </tr>
+</table>
+
+<p style="text-align: left;">
+    &nbsp;&nbsp;&nbsp;&nbsp;Characters marked in <span style="color: darkred;"><b>red</b></span> (<b>1</b> to <b>10</b>) <b>cannot</b> be entered using the microcomputer <b>keyboard</b>,
+    so the <b>"CHR <i>dec. code</i>"</b> command <b>should</b> be used instead, for example <b>"CHR 10"</b> for the character <b>'…'</b>.<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;The <b>0 character</b> does not exist because <b>0</b> is the <b>end-of-line character</b> in a microcomputer.
+    <b> Character 96 (0x60)</b> does not have its <b>own style</b>, since it is <b>specified by the user</b> using the <b>"LETC <i>code or variable</i>"</b> command,
+    for example <b>' LETC "4ERE4E4" '</b> or <b>' LETC G$ '</b>. The <b>"CHR 96"</b> command <b>should always</b> be used for this symbol.
+</p>
+
+<hr>
+<h3 style="margin-top: 5px;margin-bottom: 5px;">Menu</h3>
+<a class="menulink" href="help.html">Main page</a>
+<a class="menulink" href="interface.html">Emulator interface</a><br>
+<a class="menulink" href="panel.html">Working with the options panel</a>
+<a class="menulink" href="debug.html">Working with the Debugger</a>
+<a class="menulink" href="chr96.html">Working with the CHR96 utility</a><br>
+<span class="menulink">Working with BASIC data converters</span><br>
+<a class="menulink" href="faq.html">Frequently asked questions (FAQ)</a>
+<hr>
+
+<script>
+    function copyc(obj, char) {
+        obj.style.backgroundColor="LightGreen";
+        navigator.clipboard.writeText(char);
+        setTimeout(function(obj){obj.style.backgroundColor="";}, 500, obj);
+    }
+</script>
+</body>
+</html> 

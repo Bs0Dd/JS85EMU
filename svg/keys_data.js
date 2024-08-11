@@ -11,12 +11,17 @@ function uniqueFromTwoArrays(arr1, arr2) {
 
 function keysRead(rows) {
 	// rows a.k.a. CPU parallel port output
-	
-	var lastElem = uniquesPressed[uniquesPressed.length-1];
-	
-	var k = ((typeof lastElem != 'undefined')&&(lastElem in keyTable))?keyTable[lastElem]:keyTable["nokey"];
 
-	var cols = ((rows&2)?k[0]:0)|((rows&4)?k[1]:0)|((rows&8)?k[2]:0);
+	var ks = [0, 0, 0];
+
+	for (let i=0; i < uniquesPressed.length; i++) {
+		var k = (uniquesPressed[i] in keyTable)?keyTable[uniquesPressed[i]]:keyTable["nokey"];
+		ks[0] |= k[0];
+		ks[1] |= k[1];
+		ks[2] |= k[2];
+	}
+
+	var cols = ((rows&2)?ks[0]:0)|((rows&4)?ks[1]:0)|((rows&8)?ks[2]:0);
 	// if((rows&2)&&(lastElem=="stop")) 
 	// {
 	// 	MK85CPU.flag_halt = true;

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>JS85EMU Help</title>
+<meta charset="UTF-8">
+<style>
+    body {text-align: center;}
+
+    .menulink {
+        padding-left: 10px;
+        padding-right: 10px;
+        font-weight: bold;
+    }
+</style>
+</head>
+<body>
+
+<h1>JS85EMU Help</h1>
+
+<h3><a href="panel_ru.html">Русский</a></h3>
+
+<hr>
+<h3 style="margin-top: 5px;margin-bottom: 5px;">Menu</h3>
+<a class="menulink" href="help.html">Main page</a>
+<a class="menulink" href="interface.html">Emulator interface</a><br>
+<span class="menulink">Working with the options panel</span>
+<a class="menulink" href="debug.html">Working with the Debugger</a>
+<a class="menulink" href="chr96.html">Working with the CHR96 utility</a><br>
+<a class="menulink" href="conv.html">Working with BASIC data converters</a><br>
+<a class="menulink" href="faq.html">Frequently asked questions (FAQ)</a>
+<hr>
+
+<h3>Options panel</h3>
+
+<img src="panel.png" alt="panel"><br>
+
+<p style="text-align: left;">
+    &nbsp;&nbsp;&nbsp;&nbsp;The <b>options panel</b> is a tool for <b>configuring</b> and <b>managing</b> the emulator,
+    allowing you to modify <b>basic parameters</b> that affect the behavior of the <b>virtual microcomputer</b>.<br><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;The panel consists of <b>6 sections</b> with parameters grouped according to <b>common characteristics</b>.
+</p><br>
+
+<h4>Information section</h4>
+
+<img src="p1.png" alt="p1"><br>
+ 
+<p style="text-align: left;">
+    &nbsp;&nbsp;&nbsp;&nbsp;A small section that displays <b>information</b> about the state of <b>memory</b> in the microcomputer.<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;First of all, the amount of <b>free memory</b> for <b>BASIC</b> programs is displayed.
+    This is very important when using a virtual microcomputer with <b>RAM</b> exceeding <b>10KB</b>,
+    when the amount of free memory exceeds <b>9999</b> bytes and the firmware <b>is not able</b> to display its real amount,
+    showing <b>distorted</b> numbers on seven-segment indicators.
+</p>
+
+<img src="invfr.png" alt="invfr"><br>
+<i>number <b>23749</b> on the indicator</i>
+
+    <p style="text-align: left;">
+    &nbsp;&nbsp;&nbsp;&nbsp;For <b>informational</b> purposes, there is also an indication of the number of <b>allocated variables</b> (<b>26</b> by default) and the <b>size</b> they occupy.<br><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;Information is <b>calculated</b> by <b>directly accessing</b> certain areas of <b>RAM</b> and calculating the <b>final numbers</b> according to <b>original algorithms</b>.
+</p><br>
+
+<h4>Control section</h4>
+
+<img src="p2.png" alt="p2"><br>
+ 
+<p style="text-align: left;">
+    &nbsp;&nbsp;&nbsp;&nbsp;The section is used to <b>control</b> the operation of the emulator and switch <b>general functions</b>.
+    The <b>"Pause"</b> and <b>"Restart"</b> buttons, as the name suggests, are used to <b>pause</b> and <b>restart</b> the emulator.
+    The <b>"EXT overlay"</b> parameter switches the <b>display of characters</b> that are actually placed on a <b>separate overlay</b>
+    (characters typed in <b>extended</b> (<b>EXT</b>) mode with the <b>S</b> modifier pressed).
+    The <b>"Vibro (keys)"</b> parameter turns on or off the <b>vibration</b> of the device (if it is <b>capable</b> of vibrating, which usually applies to <b>portable devices</b>)
+    when you press the <b>virtual keyboard</b> of the microcomputer. On devices <b>without vibration capabilities</b>, the item <b>does not</b> perform any function.
+</p><br>
+
+<h4>RAM size section</h4>
+
+<img src="p3.png" alt="p3"><br>
+ 
+<p style="text-align: left;">
+    &nbsp;&nbsp;&nbsp;&nbsp;This section is used to <b>change the size</b> of the virtual microcomputer's RAM.
+    You just need to select the <b>desired amount</b> of RAM using the <b>slider</b> (<b>2-32KB</b>, the volume is always a multiple of <b>2KB</b>) and press the <b>"Set"</b> button.
+    It is important to understand that in this case a <b>CLEAR</b> RAM image will be created and all previous information will be <b>IRREVOCABLY LOST</b>,
+    so you need to <b>save</b> the current RAM image if the <b>programs</b> on it are important to you. When <b>replacin</b>g RAM, the microcomputer <b>reboots</b>.<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;Since a <b>blank image</b> is being created, <b>memory initialization</b> is required for the microcomputer to function <b>properly</b>.
+    This can be done by pressing the <b>"initial settings"</b> button on the microcomputer, running a <b>"initial settings"</b>
+    (<b>"initial settings"</b> command) or <b>turning on</b> the <b>"Auto init"</b> parameter in the section, which, when <b>changing</b> the size of the RAM,
+    <b>automatically</b> forces the microcomputer to <b>initialize</b> the memory.<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;The <b>"32KB fix"</b> parameter (available only if <b>"Auto init"</b> is active and <b>32KB RAM</b> is selected by the slider)
+    applies a <b>fix</b> for the correct operation of the <b>factory</b> firmware with <b>32KB RAM</b>.
+    The problem is that such a <b>large</b> amount of memory causes some procedures in the firmware to <b>work incorrectly</b>.
+    This fix allows you to <b>correct</b> this situation, but reduces the amount of <b>free</b> BASIC memory by <b>2 bytes</b> (however, this is <b>not critical</b>).
+    It is important to remember that in this case you <b>should not</b> use the <b>"initial settings"</b> button or run the <b>self-test</b>,
+    since the memory <b>initialization</b> they perform <b>will remove the fix</b> and BASIC will work <b>incorrectly</b>. In this case, you will need to <b>apply</b> this fix <b>again</b>.
+    The fix <b>doesn't need</b> to be applied for the <b>"PL ROM"</b> firmware, since it is already <b>implemented</b> into it.<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;After the controls, there is a <b>short reminder</b> about the relation between RAM sizes and <b>real</b> variants of the MK 85
+    (<b>2KB for the MK 85</b> and <b>6KB for the MK 85M</b>).
+</p><br>
+
+<h4>Data loading and saving section</h4>
+
+<img src="p4.png" alt="p4"><br>
+ 
+<p style="text-align: left;">
+    &nbsp;&nbsp;&nbsp;&nbsp;In this section you can <b>load</b> or <b>save</b> <b>RAM</b> and <b>ROM</b> of the virtual microcomputer.
+    The <b>"RAM/ROM file"</b> fields display the <b>names</b> of loaded files for RAM and ROM memory.
+    The inscription <b>"internal"</b> is shown if the built-in (<b>factory</b>) <b>ROM</b> is used or if the <b>RAM image</b> is created through the <b>RAM size</b> section.
+    To load RAM or ROM from a <b>binary file</b>, just <b>select the file</b> (using the <b>button</b> or via <b>Drag'n'Drop</b>) and click the <b>"Load RAM/ROM from file"</b> button.
+    In this case, for <b>RAM</b> the file must be a <b>multiple of 2KB</b>, for <b>ROM</b> - <b>8KB</b>. Both files <b>cannot</b> exceed <b>32KB</b>.
+    If the conditions are <b>not met</b>, the images will be automatically <b>expanded</b> to <b>multiples</b> of the corresponding numbers, or <b>trimmed</b> to <b>32KB</b>.<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;To reset the <b>ROM image</b> to the <b>factory</b> one, just press the <b>"Reset ROM"</b> button.
+    <b>RAM</b> can be reset by creating a <b>new image</b> in the <b>RAM size</b> section.<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;Instead of the <b>factory</b> ROM, you can load a <b>modified</b> version <b>"PL ROM"</b> created by <b>Piotr Piątek</b> (version <b>27 BETA</b> from <b>17.11.2010</b>).
+    The firmware contains a number of <b>innovations</b>, including <b>new</b> BASIC commands,
+    <b>expansion of the functionality</b> of existing ones and support for <b>data exchange interfaces</b>
+    (although they require <b>hardware modification</b>, so they are <b>not supported</b> in the emulator).
+    <b>More details</b> about this <b>firmware</b> can be found on the
+    <b>archive</b> version of the <a href="https://web.archive.org/web/20150828094341/http://mk85.republika.pl/rom.html" target="_blank"><b>site</b></a> (<b>Polish</b> language).
+    The firmware can be <b>loaded</b> by pressing the <b>"Load PL ROM v27B"</b> button.<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;Because RAM contains <b>programs</b>, it can be <b>saved to disk</b> as a <b>binary file</b>.
+    This is done with the <b>"Save RAM"</b> button, and the file <b>"mk85_ram.bin"</b> will be downloaded by the browser.<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;In addition, you can get a <b>list</b> with the contents of the <b>allocated variables</b> in memory
+    by clicking the <b>"Get vars list"</b> button (file <b>"mk85_vars.txt"</b>).
+    To obtain <b>all programs</b> in RAM in the form of <b>text code</b>, there is a button <b>"Get programs"</b> (file <b>"mk85_programs.txt"</b>).
+    Loading <b>text BASIC code</b> into the microcomputer is carried out using the <b>"Load program from file"</b> button (and the <b>file selection field</b> located nearby).
+    Since these buttons work with the <b>BASIC data converter</b> module, information about <b>working</b> with them is highlighted in a separate <a href="conv.html"><b>section</b></a>.  
+</p><br>
+
+<h4>Additional functions section</h4>
+
+<img src="p5.png" alt="p5"><br>
+ 
+<p style="text-align: left;">
+    &nbsp;&nbsp;&nbsp;&nbsp;The section contains buttons for opening <b>utilities</b> and information <b>windows</b>, as well as <b>debugging</b> parameters.<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;The <b>"Keyboard layout"</b> button opens a window with a computer keyboard <b>layout</b> diagram <b>adapted</b> for working with a virtual microcomputer.
+    The <b>"CHR96 code tool"</b> button opens the <a href="chr96.html"><b>CHR96 utility</b></a> panel.
+    The <b>"Debugger"</b> button opens the <a href="debug.html"><b>Debugger</b></a> panel.
+    The <b>"Help"</b> button opens a window with this <b>help</b>.
+    And the <b>"About"</b> button opens a window with <b>brief information</b> about the program and a <b>list of changes</b> (<b>Changelog</b>).<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;The <b>"Force turbo"</b> parameter is used to <b>force</b> the turbo mode usage, since the <b>real device</b>, when turned on with the turbo mode,
+    is <b>not</b> actually in it <b>permanently</b>, but turns it off when <b>outputting text</b> on the display and <b>scanning</b> the keyboard.
+    Parameter <b>"Ignore frq. div."</b> forcibly disables the processor <b>clock divider</b> (<b>8</b> times), also used when <b>outputting text</b> on the display and <b>scanning</b> the keyboard.
+    The <b>"Disable soft poff"</b> parameter disables support for the <b>software switch</b> present in the processor, which allows the firmware to <b>turn off</b> the device.
+    In MK 85, software shutdown <b>occurs</b> if the firmware is unable to detect the <b>pressed</b> key <b>21 times in a row</b> (the handler does not know about the <b>STOP</b> key
+    (because it causes a <b>HALT</b> interrupt), so this situation can be <b>caused</b> by pressing the <b>STOP</b> key <b>21 times</b>).<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;The <b>"Show debug messages"</b> parameter allows <b>debug messages</b> to be shown in the console (via the <b>console.log</b> function).
+</p><br>
+
+<h4>Speed configuration section</h4>
+
+<img src="p6.png" alt="p6"><br>
+ 
+<p style="text-align: left;">
+    &nbsp;&nbsp;&nbsp;&nbsp;This section allows you to switch the <b>speed modes</b> of the microcomputer and change the <b>speed</b> of these modes.<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;The first line (<b>"Speed"</b>) shows the <b>current state</b> of the processor.
+    It can be normal (<b>"Normal"</b>) or accelerated (<b>"Turbo"</b>).
+    The <b>8x clock divider</b> can also be enabled (<b>"(8x slowed by freq. divider)"</b>) or the processor clock can be <b>stopped</b> ("<b>(clock stopped)</b>").<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;The <b>"Standard"</b> and <b>"Turbo"</b> lines are used to change the speed of the <b>normal</b> and <b>turbo</b> modes, respectively.
+    The default speed for <b>normal</b> mode is <b>25000</b> operations per second and <b>120000</b> operations per second for <b>turbo</b>.
+    These values ​​are <b>close</b> to real microcomputers (the speed in them <b>floats</b> from device to device,
+    which is a consequence of the <b>imperfection</b> (scatter) of the resistors used in the <b>RC clock circuit</b>, no <b>quartz resonators</b>),
+    therefore they are considered <b>nominal</b>. The <b>"Reset"</b> button for each mode will always set its <b>nominal</b> value.
+    To change (in the range from <b>100</b> to <b>1000000</b> operations per second), just enter the desired value in the <b>input field</b> and click <b>"Set"</b>.<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;The <b>"Change speed mode"</b> button allows you to change the mode using <b>hot swap</b> (<b>without rebooting</b> the emulator).
+    It is recommended to change the mode only when the device's <b>clock generator</b> is <b>stopped</b>.
+    If you make a change while <b>scanning the keyboard</b> or <b>outputting text</b>, the mode may <b>not switch</b>.
+    The <b>"Restart in turbo mode"</b> button restarts the emulator with the turbo mode <b>enabled</b>.
+    A similar effect can be achieved by turning on the emulator while holding down the <b>+</b> or <b>M</b> key (using a <b>keyboard with a mouse</b> or a <b>touch screen</b>).
+</p>
+
+<hr>
+<h3 style="margin-top: 5px;margin-bottom: 5px;">Menu</h3>
+<a class="menulink" href="help.html">Main page</a>
+<a class="menulink" href="interface.html">Emulator interface</a><br>
+<span class="menulink">Working with the options panel</span>
+<a class="menulink" href="debug.html">Working with the Debugger</a>
+<a class="menulink" href="chr96.html">Working with the CHR96 utility</a><br>
+<a class="menulink" href="conv.html">Working with BASIC data converters</a><br>
+<a class="menulink" href="faq.html">Frequently asked questions (FAQ)</a>
+<hr>
+
+</body>
+</html> 
