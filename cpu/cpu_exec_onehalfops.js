@@ -98,7 +98,7 @@ CPU.prototype.execEIS = function(code) {
 				this.sp_s16[2] = 0x40-this.sp_s16[2];
 				this.sp_s16[3] = 1<<(this.sp_s16[2]-1);
 				if((s32[0]&this.sp_s16[3])!=0) this.psw |= this.flags.C;
-				this.sp_u16[2] = (s32[0] < 0) ? ((-1) << (32-this.sp_u16[1])) : 0;
+				this.sp_u16[3] = (s32[0] < 0) ? ((-1) << (32-this.sp_u16[2])) : 0;
 				s32[0] = (s32[0]>>this.sp_s16[2]) | this.sp_s16[3];
 			}
 			else if (this.sp_s16[2] > 0) {

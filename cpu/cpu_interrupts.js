@@ -3,10 +3,10 @@ CPU.prototype.execVector = function() {
 	this.vector |= (this.psw&this.flags.H)?(this.sel&0xff00):0;
 	try {
 		/* saving values to stack */
-		var PS = this.reg_u16[6];
+		var PSW = this.psw;
 		var PC = this.reg_u16[7];
 		this.reg_u16[6] -= 2;
-		this.access(this.reg_u16[6], PS, false);
+		this.access(this.reg_u16[6], PSW, false);
 		this.reg_u16[6] -= 2;
 		this.access(this.reg_u16[6], PC, false);
 		/* jumping to address */
@@ -16,7 +16,7 @@ CPU.prototype.execVector = function() {
 		if(e == this.vectors.TRAP_BUS_ERROR) {
 			if(this.vector == this.vectors.TRAP_BUS_ERROR) {
 				console.log("Caught bus error trap within itself.");
-				console.log("CPU HALTED! SP:", PS.toString(16), "PC:", PC.toString(16));
+				console.log("CPU HALTED! SP:", this.reg_u16[6].toString(16), "PC:", this.reg_u16[7].toString(16), "PSW:", this.psw.toString(16));
 				this.vector = null;
 				return CPU.prototype.halt();
 			} else {

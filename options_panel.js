@@ -84,10 +84,12 @@ function PANEL() {
     <label for="dbgm">Show debug messages in console:</label> <input type="checkbox" onChange="panelSWDbgMsg()" id="dbgm" name="dbgm" ${dbgm}>`;
 
     tabcont[2][1] = `Speed: <span id="speedstat"></span><br>
-    Standard: <input type="number" style="width:80px;" min="100" max="1000000" id="norvl" onfocus="panelEditFocus()" onblur="panelEditNoFocus()">
+    Standard: <input type="number" style="width:80px;" min="100" max="1000000" id="norvl"
+    onkeydown="panelOnEnter(this, event.keyCode, panelSetNormSP);" onfocus="panelEditFocus()" onblur="panelEditNoFocus()">
     <label for="norvl">Op/s</label>
     <button onClick="panelSetNormSP()">Set</button> <button onClick="panelResetNormSP()">Reset</button><br>
-    Turbo: <input type="number" style="width:80px;" min="100" max="1000000" id="turvl" onfocus="panelEditFocus()" onblur="panelEditNoFocus()">
+    Turbo: <input type="number" style="width:80px;" min="100" max="1000000" id="turvl"
+    onkeydown="panelOnEnter(this, event.keyCode, panelSetTurSP);" onfocus="panelEditFocus()" onblur="panelEditNoFocus()">
     <label for="turvl">Op/s</label>
     <button onClick="panelSetTurSP()">Set</button> <button onClick="panelResetTurSP()">Reset</button><br>
     <button id="cspm" onClick="panelChangeSP()">Change speed mode</button> <button id="rstm" onClick="panelSetTRB()">Restart in turbo mode</button>`;
@@ -143,6 +145,13 @@ function PANEL() {
     }
 
     return pnl;
+}
+
+function panelOnEnter(th, kc, fun) {
+    if (kc == 13) {
+        th.blur();
+        fun();
+    }
 }
 
 function panelLoadBAS() {
@@ -694,6 +703,8 @@ function panelUnStop() {
     document.getElementById("dbst").disabled = true;
     document.getElementById("dbsts").disabled = true;
     document.getElementById("dbbr").disabled = true;
+    document.getElementById("stps").disabled = true;
+    document.getElementById("brkp").disabled = true;
     document.getElementById("regist").disabled = true;
     document.getElementById("reged").disabled = true;
     document.getElementById("edreg").disabled = true;
@@ -929,6 +940,8 @@ function panelSwState(stat) {
     document.getElementById("dbst").disabled = !stopped;
 	document.getElementById("dbsts").disabled = !stopped;
 	document.getElementById("dbbr").disabled = !stopped;
+    document.getElementById("stps").disabled = !stopped;
+    document.getElementById("brkp").disabled = !stopped;
     document.getElementById("regist").disabled = !stopped;
     document.getElementById("reged").disabled = !stopped;
     document.getElementById("edreg").disabled = !stopped;

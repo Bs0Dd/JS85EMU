@@ -45,12 +45,14 @@ function DBGTOOL() {
     <div style="text-align:center;line-height:1.7;">
     <button disabled id="disu" onclick="debugDisU();debugUpdate();"><b>U</b></button>
     <button disabled id="dispu" onclick="debugDisPgU();"><b>PgU</b></button> 
-    |<input disabled style="width:50px;" maxlength="4" oninput="debugValidInput(this, DISOCT)" id="disgo" onfocus="panelEditFocus()" onblur="panelEditNoFocus()">
+    |<input disabled style="width:50px;" maxlength="4" oninput="debugValidInput(this, DISOCT)"
+    onkeydown="panelOnEnter(this, event.keyCode, debugGoDis);" id="disgo" onfocus="panelEditFocus()" onblur="panelEditNoFocus()">
     <button disabled id="disgob" onclick="debugGoDis();"><b>Go</b></button>|
     <button disabled id="dispd" onclick="debugDisPgD();"><b>PgD</b></button>
     <button disabled id="disd" onclick="debugDisD();debugUpdate();"><b>D</b></button><br>
     <button disabled id="disr" onclick="debugDisRead();"><b>Read</b></button>
-    <input disabled style="width:160px;" maxlength="28" id="dised" onfocus="panelEditFocus()" onblur="panelEditNoFocus()">
+    <input disabled style="width:160px;" maxlength="28"
+    onkeydown="panelOnEnter(this, event.keyCode, debugDisSet);" id="dised" onfocus="panelEditFocus()" onblur="panelEditNoFocus()">
     <button disabled id="diss" onclick="debugDisSet();"><b>Set</b></button>
     </div>`
 
@@ -79,15 +81,18 @@ function DBGTOOL() {
         <button id="drst" onClick="panelDevRestart()">Restart</button> ||
         <button id="dbcl" onClick="panelOpenDbg()">Close</button></td></tr>
         <tr><td><label style="font-size:14px;font-style:italic;" for="stps">Decimal number of steps:</label><br>
-        <input type="number" style="width:80px;" value="1" min="1" max="1000000" id="stps" onfocus="panelEditFocus()" onblur="panelEditNoFocus()">
+        <input disabled  type="number" style="width:80px;" value="1" min="1" max="1000000"
+        onkeydown="panelOnEnter(this, event.keyCode, debugSteps);" id="stps" onfocus="panelEditFocus()" onblur="panelEditNoFocus()">
         <button id="dbsts" onClick="debugSteps()" disabled>Execute</button>
         <button id="dbst" onClick="debugStep()" disabled>Single</button></td></tr>
         <tr><td><label style="font-size:14px;font-style:italic;" for="brkp">Set breakpoint on <span id="adrt">hex</span> address:</label><br>
-        <input style="width:50px;" id="brkp" value="0000" maxlength="4" oninput="debugValidInput(this, REGOCT)" onfocus="panelEditFocus()" onblur="panelEditNoFocus()">
+        <input disabled  style="width:50px;" id="brkp" value="0000" maxlength="4"
+        onkeydown="panelOnEnter(this, event.keyCode, debugBreakp);" oninput="debugValidInput(this, REGOCT)" onfocus="panelEditFocus()" onblur="panelEditNoFocus()">
         <button id="dbbr" onClick="debugBreakp()" disabled>Set & run</button>
         <button id="dbclb" onClick="debugClearB()">Clear</button></td></tr>
         <tr><td><label style="font-size:14px;font-style:italic;" for="stps">Change register value (<span id="regtp">hex</span>):</label><br>
-        <select id="regist" name="regist" disabled onchange="debugUpdRegIn();">  
+        <select id="regist" name="regist" disabled onchange="debugUpdRegIn();var reged = document.getElementById('reged');
+        reged.focus();reged.setSelectionRange(0, 10);">  
             <option value="R0">R0</option>
             <option value="R1">R1</option>
             <option value="R2">R2</option>
@@ -100,7 +105,8 @@ function DBGTOOL() {
             <option value="CPUCTRL">CPUCTRL</option>
             <option value="PP">PP</option>
         </select>  
-        <input disabled style="width:50px;" value="0000" maxlength="4" oninput="debugValidInput(this, REGOCT)" id="reged" onfocus="panelEditFocus()" onblur="panelEditNoFocus()">
+        <input disabled style="width:50px;" value="0000" maxlength="4" onkeydown="panelOnEnter(this, event.keyCode, debugEditReg);"
+        oninput="debugValidInput(this, REGOCT)" id="reged" onfocus="panelEditFocus()" onblur="panelEditNoFocus()">
         <button id="edreg" onClick="debugEditReg()" disabled>Change</button></td></tr></table>`
 
     const row = document.createElement("tr");
@@ -243,13 +249,16 @@ function DBGTOOL() {
     conttab.innerHTML = `<button onclick="debugShiftL();"><b>&lt;-</b></button>
     <button onclick="if ((RAMADDR-0x10) >= RAMSTA){RAMADDR-=0x10;debugDrawRamAddr();debugUpdate();}"><b>Up</b></button>
     <button onclick="if ((RAMADDR-0xA0) >= RAMSTA){RAMADDR-=0xA0;debugDrawRamAddr();debugUpdate();}"><b>Page Up</b></button> |
-    <input style="width:50px;" value="0000" maxlength="4" oninput="debugValidInput(this, RAMOCT)" id="ramgo" onfocus="panelEditFocus()" onblur="panelEditNoFocus()">
+    <input style="width:50px;" value="0000" maxlength="4" onkeydown="panelOnEnter(this, event.keyCode, debugGoRam);"
+    oninput="debugValidInput(this, RAMOCT)" id="ramgo" onfocus="panelEditFocus()" onblur="panelEditNoFocus()">
     <button onclick="debugGoRam();"><b>Go</b></button> |
     <button onclick="if (((RAMADDR+0xA0) < (RAM.length+RAMSTA)) && ((RAMADDR+0xA0) < RAMLIM-0x8F)){RAMADDR+=0xA0;debugDrawRamAddr();debugUpdate();}"><b>Page Down</b></button>
     <button onclick="if (((RAMADDR+0x10) < (RAM.length+RAMSTA)) && ((RAMADDR+0x10) < RAMLIM-0x8F)){RAMADDR+=0x10;debugDrawRamAddr();debugUpdate();}"><b>Down</b></button>
     <button onclick="debugShiftR();"><b>-&gt;</b></button><br>
-    Address: <input style="width:50px;" value="0000" maxlength="4" oninput="debugValidInput(this, RAMOCT)" id="ramcha" onfocus="panelEditFocus()" onblur="panelEditNoFocus()">
-    Value: <input style="width:50px;" value="0000" maxlength="2" oninput="debugValidInput(this, RAMOCT)" id="ramch" onfocus="panelEditFocus()" onblur="panelEditNoFocus()">
+    Address: <input style="width:50px;" value="0000" maxlength="4" onkeydown="panelOnEnter(this, event.keyCode, debugReadMem);"
+    oninput="debugValidInput(this, RAMOCT)" id="ramcha" onfocus="panelEditFocus()" onblur="panelEditNoFocus()">
+    Value: <input style="width:50px;" value="0000" maxlength="2" onkeydown="panelOnEnter(this, event.keyCode, debugChangeMem);"
+    oninput="debugValidInput(this, RAMOCT)" id="ramch" onfocus="panelEditFocus()" onblur="panelEditNoFocus()">
     <button onclick="debugReadMem();"><b>Read</b></button>
     <button onclick="debugChangeMem();"><b>Change</b></button>`;
 
@@ -337,10 +346,13 @@ function debugRegClick(obj) {
     }
 
     debugUpdRegIn();
+    var reged = document.getElementById("reged");
+    reged.focus();
+    reged.setSelectionRange(0, 10);
 }
 
 function debugDisClick(obj) {
-    if (!stopped) {
+    if (POWER && !stopped) {
         return;
     }
 
@@ -350,6 +362,8 @@ function debugDisClick(obj) {
     }
 
     document.getElementById("disgo").value = adrcell.innerText.substring(0, adrcell.innerText.length-1);
+
+    debugDisRead();
 }
 
 function debugDisRead() {
@@ -377,7 +391,10 @@ function debugDisRead() {
         return;
     }
 
-    document.getElementById("dised").value = debugDisOpStep();
+    var dised = document.getElementById("dised")
+    dised.value = debugDisOpStep();
+    dised.focus();
+    dised.setSelectionRange(0, 50);
 }
 
 function debugDisOpStep() {
@@ -692,6 +709,9 @@ function debugBreakp() {
         return;
     }
     BREAKPOINT = parseInt(document.getElementById("brkp").value, RAMOCT ? 8 : 16);
+    if (BREAKPOINT == MK85CPU.reg_u16[7]) {
+        SKIPBSTEP = true;
+    }
     panelSwState();
 }
 

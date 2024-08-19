@@ -39,6 +39,25 @@
 <h2>Changelog</h2>
 
 <div style="text-align: left;">
+    <b>-> Version 1.52 - 19.08.2024</b>
+</div>
+    <ul style="text-align: left;">
+        <li>Fixed a bug in the interrupt execution function<br>
+            (R6/SP was saved instead of PSW)</li>
+        <li>Improved interrupt system (correct operation of the WAIT instruction<br>
+            and reset the internal EVNT interrupt flag)</li>
+        <li>Fixed RTT and ASHC instructions</li>
+        <li>Fixed a bug in the breakpoint system
+            (the system worked instantly if the breakpoint<br>was set to the current address)</li>
+        <li>The assembler instruction and register value entry fields are automatically<br>
+            highlighted when you click on the buttons that transfer data to these fields.</li>
+        <li>Now, after entering a value in the input fields, just press Enter<br>
+            to apply the value entered in the field
+        </li>
+    </ul>
+
+<br>
+<div style="text-align: left;">
     <b>-> Version 1.5 - 12.08.2024</b>
 </div>
     <ul style="text-align: left;">

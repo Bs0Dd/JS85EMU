@@ -51,6 +51,8 @@ function devicePower() {
 		document.getElementById("dbst").disabled = POWER;
 		document.getElementById("dbsts").disabled = POWER;
 		document.getElementById("dbbr").disabled = POWER;
+		document.getElementById("stps").disabled = POWER;
+		document.getElementById("brkp").disabled = POWER;
 		document.getElementById("regist").disabled = POWER;
         document.getElementById("reged").disabled = POWER;
         document.getElementById("edreg").disabled = POWER;
@@ -108,6 +110,8 @@ function startEmu() {
 				BREAKPOINT = false;
 				return;
 			}
+			
+			if (SKIPBSTEP){SKIPBSTEP=false;}
 
 			if(((MK85CPU.cpuctrl&0x1000)!=0) && !MK85CPU.ignorePowerOff) {
 				console.log("Device was turned off by firmware (bit 12 in cpuctrl was set)!");

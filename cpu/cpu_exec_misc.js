@@ -42,7 +42,7 @@ CPU.prototype.execRTI = function(code) {
 	var SP2 = this.addressingIP(0x16, false);
 	this.psw = SP2.ru();
 	//this.reg_u16[6] += 2;
-	if (this.reg_u16[7]>=0xe000) this.psw |= this.flags.H;
+	//if (this.reg_u16[7]>=0xe000) this.psw |= this.flags.H; {dubious}
 	return CPU.prototype.execCode;
 };
 
@@ -61,7 +61,7 @@ CPU.prototype.execRESET = function(code) {
 
 CPU.prototype.execRTT = function(code) {
 	this.flag_rtt = true
-	return CPU.prototype.execRTI(code);
+	return this.execRTI(code);
 };
 
 CPU.prototype.execRSEL = function(code) {

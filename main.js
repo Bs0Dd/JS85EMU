@@ -21,7 +21,7 @@ window.onload = function() {
 	document.getElementById("mktype").setAttributeNS(null, "opacity", (RAM.length > 2048 ? 0 : 1));
 };
 
-var VERVAR = "1.5 - build 12.08.2024"
+var VERVAR = "1.52 - build 19.08.2024"
 
 var supportsVibrate = "vibrate" in navigator;
 
@@ -51,6 +51,7 @@ var SPEED_TURBO = loadProperty('mk_turbospeed', 1200, false);
 
 var DEBUG_STEPS = false;
 var BREAKPOINT = false;
+var SKIPBSTEP = false;
 
 var ignoreFreqDiv = loadProperty('mk_ignorediv', false, true);
 var ignorePowerOff = loadProperty('mk_ignorepoff', false, true);
