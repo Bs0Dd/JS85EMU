@@ -90,7 +90,7 @@ function devicePower() {
 function startEmu() {
 	glueCPU();
 	LCD.timerCallback = function () {
-		if(keysRead(PP)>0)
+		if(uniquesPressed.length>0)
 		{
 //			if(uniquesPressed.indexOf("stop")!=-1) MK85CPU.flag_halt = true;
 			MK85CPU.cpuctrl |= 0x0400;	// enable CPU clock if key in selected by PP row is pressed
