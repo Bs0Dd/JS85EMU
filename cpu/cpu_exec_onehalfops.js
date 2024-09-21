@@ -40,11 +40,12 @@ CPU.prototype.execEIS = function(code) {
 			this.sp_u16[1] = this.reg_u16[r|0];
 			this.sp_u16[2] = src.ru();
 			this.sp_u16[3] = 0;
+			s32[1] = s32[1] << 16 >> 16;
 			if(s32[1]==0) {
 				this.psw |= this.flags.V|this.flags.C;
 				return CPU.prototype.execCode;
 			}		
-			s32[2] = Math.floor(s32[0]/s32[1]);
+			s32[2] = Math.trunc(s32[0]/s32[1]);
 			s32[3] = s32[0] % s32[1];
 			this.reg_s16[r] = s32[2];
 			this.reg_s16[r|1] = s32[3];

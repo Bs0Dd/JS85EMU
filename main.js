@@ -11,17 +11,19 @@ window.onload = function() {
 	document.getElementById("mk85_panel").appendChild(PAN);
 	document.getElementById("mk85_ch96").appendChild(CH96P);
 	document.getElementById("mk85_dbg").appendChild(DBG);
-	PAN.panelStart();
+	if (((!extram || eramd) && (!extrom || erold))){
+		document.getElementById("mktype").setAttributeNS(null, "opacity", (RAM.length > 2048 ? 0 : 1));
+		PAN.panelStart();
+	}
 	//DBG.debugStart();
 
 	if (window.localStorage.getItem('mk_overlay') == "true"){
 		panelSwOverlay();
 	}
-
-	document.getElementById("mktype").setAttributeNS(null, "opacity", (RAM.length > 2048 ? 0 : 1));
+	pagld = true;
 };
 
-var VERVAR = "1.52 - build 19.08.2024"
+var VERVAR = "1.6 - build 21.09.2024"
 
 var supportsVibrate = "vibrate" in navigator;
 
@@ -73,47 +75,146 @@ var ROM = null;
 var POWER = true;
 var PAUSE_ON_HID = false;
 
+function extrun() {
+	if ((extram || extrom) && pagld) {
+		document.getElementById("mktype").setAttributeNS(null, "opacity", (RAM.length > 2048 ? 0 : 1));
+		PAN.panelStart();
+	}
+	startEmu();
+}
+
 // Load RAM and ROM contents
+
+function ramlo() {
+	if(ram == null) {
+		console.log("Creating new RAM memory file");
+		RAM = new Uint8Array(2048);
+		ramname = "internal";
+		ramAutoInit();
+	} else if (!extram) {
+		console.log("Getting RAM contents from local storage");
+	
+		if (ramname == null) {
+			ramname = "internal";
+		}
+	
+		RAM = new Uint8Array(base64ToArrayBuffer(ram));
+	}
+}
 
 var ram = window.localStorage.getItem('mk_ram');
 var ramname = window.localStorage.getItem('mk_ramname');
 
-if(ram == null) {
-	console.log("Creating new RAM memory file");
-	RAM = new Uint8Array(2048);
-	ramname = "internal";
-	ramAutoInit();
-} else {
-	console.log("Getting RAM contents from local storage");
+var urargs = parseURLParams(window.location.href);
+var extram = false;
+var extrom = false;
+var eramd = false;
+var erold = false;
 
-	if (ramname == null) {
-		ramname = "internal";
+var pagld = false;
+
+if (urargs && urargs.ram) {
+	var ract = true;
+	if (ram != null && !(urargs.fload && urargs.fload=="force")) {
+		ract = confirm('You are going to load RAM from the link and the old RAM will be lost. \
+If the data in it is important to you, interrupt the load and save the old RAM.')
 	}
-
-	RAM = new Uint8Array(base64ToArrayBuffer(ram));
+	
+	if (ract) {	
+		console.log('Ext RAM load started.');
+		extram = true;
+		ramname = urargs.ram.toString().split('/').pop();
+		loadBinaryHTTP(urargs.ram,
+		function (buf) {
+			RAM = new Uint8Array(buf);
+			RAMbou();
+			eramd = true;
+			window.localStorage.setItem('mk_ram', btoa(String.fromCharCode.apply(null, RAM)));
+			window.localStorage.setItem('mk_ramname', ramname);
+			if (!extrom || erold) {
+				extrun();
+			}
+		},
+		function () {
+			extram = false;
+			ramname = window.localStorage.getItem('mk_ramname');
+			alert("Failed to load RAM from the link, loading old RAM...");
+			ramlo();
+			eramd = true;
+			if (!extrom || erold) {
+				extrun();
+			}
+		},);
+	} else {
+		console.log('Ext RAM load interrupted.');
+		ramlo();
+	}
 }
+else {
+	ramlo();
+}
+
+
+
+function romlo() {
+	if (usePlRom) {
+		console.log("Loading internal ROM memory file");
+		romname = "internal (PL ROM v27B)";
+	
+		ROM = new Uint8Array(ROM_pol); // Internal ROM image constant (piotr)
+	}
+	else if(rom == null) {
+		console.log("Loading internal ROM memory file");
+		romname = "internal";
+	
+		ROM = new Uint8Array(ROM_int); // Internal ROM image constant (factory)
+	} else {
+		console.log("Getting ROM contents from local storage");
+	
+		ROM = new Uint8Array(base64ToArrayBuffer(rom));
+	}
+}
+
 
 var rom = window.localStorage.getItem('mk_rom');
 var romname = window.localStorage.getItem('mk_romname');
 
-if (usePlRom) {
-	console.log("Loading internal ROM memory file");
-	romname = "internal (PL ROM v27B)";
 
-	ROM = new Uint8Array(ROM_pol); // Internal ROM image constant (piotr)
+if (urargs && urargs.rom) {
+	
+	console.log('Ext ROM load started.');
+	extrom = true;
+	romname = urargs.rom.toString().split('/').pop();
+	loadBinaryHTTP(urargs.rom,
+	function (buf) {
+		ROM = new Uint8Array(buf);
+		ROMbou();
+		erold = true;
+		window.localStorage.setItem('mk_rom', btoa(String.fromCharCode.apply(null, ROM)));
+		window.localStorage.setItem('mk_romname', romname);
+		window.localStorage.setItem('mk_polrom', false);
+		if (!extram || eramd) {
+			extrun();
+		}
+	},
+	function () {
+		extrom = false;
+		romname = window.localStorage.getItem('mk_romname');
+		alert("Failed to load ROM from the link, loading old ROM...");
+		romlo();
+		erold = true;
+		if (!extram || eramd) {
+			extrun();
+		}
+	},);
 }
-else if(rom == null) {
-	console.log("Loading internal ROM memory file");
-	romname = "internal";
-
-	ROM = new Uint8Array(ROM_int); // Internal ROM image constant (factory)
-} else {
-	console.log("Getting ROM contents from local storage");
-
-	ROM = new Uint8Array(base64ToArrayBuffer(rom));
+else {
+	romlo();
 }
 
-startEmu();
+if (!extram && !extrom) {
+	startEmu();
+}
 
 
 document.addEventListener("visibilitychange", () => {

@@ -30,7 +30,7 @@ function KBKeyPress(evt) {
 
 	// find the key in mapping
 	if(uniquesPressed.indexOf(key) == -1) {
-		if((key=="stop")&&(!MK85CPU.flag_halt)) MK85CPU.flag_halt = true;
+		if((key=="stop")&&(!MK85CPU.flag_halt)&&(PP&2)) MK85CPU.flag_halt = true;
 		uniquesPressed.push(key);
 		console.log("Pressed", key, uniquesPressed);
 	}
@@ -69,7 +69,7 @@ function GUIKeyPress(evt) {
 	}
 
 	if(uniquesPressed.indexOf(key) == -1) {
-		if((key=="stop")&&(!MK85CPU.flag_halt)) MK85CPU.flag_halt = true;
+		if((key=="stop")&&(!MK85CPU.flag_halt)&&(PP&2)) MK85CPU.flag_halt = true;
 		uniquesPressed.push(key);
 		console.log(uniquesPressed);
 	}

@@ -30,7 +30,7 @@ CPU.prototype.execSingleOp = function(code) {
 			spu[0] = ((code>>6)&1)?spu[0]-1:spu[0]+1;
 			dst.w(spu[0]);
 			this.psw &= ~this.flags.V;			
-			this.psw |= (spu[0]==(isByte?0x80:0x8000)-(code&1))?this.flags.V:0;
+			this.psw |= (spu[0]==(isByte?0x80:0x8000)-((code>>6)&1))?this.flags.V:0;
 			this.checkBitNZ(sps[0]);
 			return CPU.prototype.execCode;
 		}
@@ -133,12 +133,11 @@ CPU.prototype.execMTPS = function(code) {
 	return CPU.prototype.execCode;
 }
 
-CPU.prototype.execMFPS = function(code) {	
-	var isByte = (code&0x8000)==0x8000;
+CPU.prototype.execMFPS = function(code) {
 	/* if destination is a register, then sign-extend it */
-	var dst = this.addressingIP(code&0x3f, ((code&0x38)==0)?false:isByte);
+	var dst = this.addressingIP(code&0x3f, ((code&0x38)!=0));
 	
-	var x = this.psw&0xff;
+	var x = this.psw << 24 >> 24;
 
 	dst.w(x);
 	this.psw &= ~this.flags.V;

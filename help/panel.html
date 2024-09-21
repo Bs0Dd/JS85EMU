@@ -102,12 +102,17 @@
 <img src="p4.png" alt="p4"><br>
  
 <p style="text-align: left;">
-    &nbsp;&nbsp;&nbsp;&nbsp;In this section you can <b>load</b> or <b>save</b> <b>RAM</b> and <b>ROM</b> of the virtual microcomputer.
-    The <b>"RAM/ROM file"</b> fields display the <b>names</b> of loaded files for RAM and ROM memory.
+    &nbsp;&nbsp;&nbsp;&nbsp;In this section you can <b>load</b> or <b>save</b> <b>RAM</b> and <b>ROM</b> of the virtual microcomputer.<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;The <b>"RAM/ROM file"</b> fields display the <b>names</b> of loaded files for RAM and ROM memory.
     The inscription <b>"internal"</b> is shown if the built-in (<b>factory</b>) <b>ROM</b> is used or if the <b>RAM image</b> is created through the <b>RAM size</b> section.
     To load RAM or ROM from a <b>binary file</b>, just <b>select the file</b> (using the <b>button</b> or via <b>Drag'n'Drop</b>) and click the <b>"Load RAM/ROM from file"</b> button.
     In this case, for <b>RAM</b> the file must be a <b>multiple of 2KB</b>, for <b>ROM</b> - <b>8KB</b>. Both files <b>cannot</b> exceed <b>32KB</b>.
     If the conditions are <b>not met</b>, the images will be automatically <b>expanded</b> to <b>multiples</b> of the corresponding numbers, or <b>trimmed</b> to <b>32KB</b>.<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<b>RAM</b> and <b>ROM</b> can also be loaded from a <b>network link</b> using the <b>URL</b> arguments <b>rom</b> and <b>ram</b>.
+    <b>For example:</b> http://example.com/emu.html?<b>ram=http://example.com/ram.bin</b>&<b>rom=http://example.com/rom.bin</b>.
+    If the emulator has <b>saved RAM</b>, before loading, the user needs to <b>confirm</b> that he agrees to load the RAM from
+    <b>network link</b>, as this will result in <b>loss</b> of the saved RAM. Using the <b>fload=force</b> parameter you can <b>disable</b> confirmation,
+    but adding the parameter to <b>public links</b> is strictly <b>not recommended</b>!<br>
     &nbsp;&nbsp;&nbsp;&nbsp;To reset the <b>ROM image</b> to the <b>factory</b> one, just press the <b>"Reset ROM"</b> button.
     <b>RAM</b> can be reset by creating a <b>new image</b> in the <b>RAM size</b> section.<br>
     &nbsp;&nbsp;&nbsp;&nbsp;Instead of the <b>factory</b> ROM, you can load a <b>modified</b> version <b>"PL ROM"</b> created by <b>Piotr Piątek</b> (version <b>27 BETA</b> from <b>17.11.2010</b>).

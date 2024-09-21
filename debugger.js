@@ -813,7 +813,7 @@ function debugUpdate() {
 
 
     
-    var ppbin = ('00000000000000' + PP.toString(2).toUpperCase()).slice(-16).substring(0, 15);
+    var ppbin = ('000000000000000' + PP.toString(2).toUpperCase()).slice(-16).substring(0, 15);
     ppbin = [ppbin.slice(0, 8), " ", ppbin.slice(8)].join('');
 
     if ((MK85CPU.cpuctrl&0x1) != 0) {

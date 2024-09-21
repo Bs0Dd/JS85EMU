@@ -775,16 +775,7 @@ function panelLoadRoF(){
 
         ROM = new Uint8Array(reader.result);
 
-        if (ROM.length > 32768) {  // 32KB max size
-            ROM = ROM.subarray(0, 32768);
-            console.log("Maximum ROM memory size is 32KB, memory area reduced");
-        }
-        else if (ROM.length % 8192 != 0) {  // Real processor uses a ROM chips multiple of 8KB min
-            var nROM = new Uint8Array((Math.floor(ROM.length / 8192)+1)*8192);
-            nROM.set(ROM);
-            ROM = nROM;
-            console.log(`The ROM size must be a multiple of 8KB, increasing the area to ${ROM.length / 1024}KB.`);
-        }
+        ROMbou();
 
         romname = romf.name;
         window.localStorage.setItem('mk_rom', btoa(String.fromCharCode.apply(null, ROM)));
@@ -850,16 +841,7 @@ function panelLoadRaF() {
 
         RAM = new Uint8Array(reader.result);
 
-        if (RAM.length > 32768) {  // 32KB max size
-            RAM = RAM.subarray(0, 32768);
-            console.log("Maximum RAM memory size is 32KB, memory area reduced");
-        }
-        else if (RAM.length % 2048 != 0) {  // Real processor uses a RAM chips multiple of 2KB min
-            var nRAM = new Uint8Array((Math.floor(RAM.length / 2048)+1)*2048);
-            nRAM.set(RAM);
-            RAM = nRAM;
-            console.log(`The RAM size must be a multiple of 2KB, increasing the area to ${RAM.length / 1024}KB.`);
-        }
+        RAMbou();
 
         ramname = ramf.name;
         window.localStorage.setItem('mk_ram', btoa(String.fromCharCode.apply(null, RAM)));

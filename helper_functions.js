@@ -16,6 +16,32 @@ function loadProperty(propname, defval, convtobool){
 	return prop;
 }
 
+function RAMbou() {
+	if (RAM.length > 32768) {  // 32KB max size
+		RAM = RAM.subarray(0, 32768);
+		console.log("Maximum RAM memory size is 32KB, memory area reduced");
+	}
+	else if (RAM.length % 2048 != 0) {  // Real processor uses a RAM chips multiple of 2KB min
+		var nRAM = new Uint8Array((Math.floor(RAM.length / 2048)+1)*2048);
+		nRAM.set(RAM);
+		RAM = nRAM;
+		console.log(`The RAM size must be a multiple of 2KB, increasing the area to ${RAM.length / 1024}KB.`);
+	}
+}
+
+function ROMbou() {
+	if (ROM.length > 32768) {  // 32KB max size
+		ROM = ROM.subarray(0, 32768);
+		console.log("Maximum ROM memory size is 32KB, memory area reduced");
+	}
+	else if (ROM.length % 8192 != 0) {  // Real processor uses a ROM chips multiple of 8KB min
+		var nROM = new Uint8Array((Math.floor(ROM.length / 8192)+1)*8192);
+		nROM.set(ROM);
+		ROM = nROM;
+		console.log(`The ROM size must be a multiple of 8KB, increasing the area to ${ROM.length / 1024}KB.`);
+	}
+}
+
 /* http://stackoverflow.com/questions/21797299/convert-base64-string-to-arraybuffer */
 
 function base64ToArrayBuffer(base64) {
@@ -29,6 +55,51 @@ function base64ToArrayBuffer(base64) {
 }
 
 /* ---------- */
+
+/* https://stackoverflow.com/questions/814613/how-to-read-get-data-from-a-url-using-javascript */
+
+function parseURLParams(url) {
+    var queryStart = url.indexOf("?") + 1,
+        queryEnd   = url.indexOf("#") + 1 || url.length + 1,
+        query = url.slice(queryStart, queryEnd - 1),
+        pairs = query.replace(/\+/g, " ").split("&"),
+        parms = {}, i, n, v, nv;
+
+    if (query === url || query === "") return;
+
+    for (i = 0; i < pairs.length; i++) {
+        nv = pairs[i].split("=", 2);
+        n = decodeURIComponent(nv[0]);
+        v = decodeURIComponent(nv[1]);
+
+        if (!parms.hasOwnProperty(n)) parms[n] = [];
+        parms[n].push(nv.length === 2 ? v : null);
+    }
+    return parms;
+}
+
+/* ---------- */
+
+function loadBinaryHTTP(urlBIN, callback, errCallback) {
+	var oReq = new XMLHttpRequest();
+	oReq.open("GET", urlBIN, true);
+	oReq.responseType = "arraybuffer";
+	loadCounter++;
+	oReq.onload = function (oEvent) {
+		if (oReq.status != 200) {
+			console.log(`Failed to load ${urlBIN.toString().split('/').pop()}! Error`, oReq.status);
+			if(typeof errCallback == 'function') errCallback();
+			return;
+		}
+
+		var arrayBuffer = oReq.response; // Note: not oReq.responseText
+		if (arrayBuffer) {
+			console.log(`File ${urlBIN.toString().split('/').pop()} loaded!`);
+			if(typeof callback == 'function') callback(arrayBuffer);
+		};
+	};
+	oReq.send(null);
+}
 
 function ramAutoInit() {
 	uniquesPressed.push("init");
@@ -90,10 +161,10 @@ function devicePower() {
 function startEmu() {
 	glueCPU();
 	LCD.timerCallback = function () {
-		if(uniquesPressed.length>0)
+		if(keysRead(PP)>0 || ((uniquesPressed.indexOf("stop")!=-1) && (PP&2)))
 		{
 //			if(uniquesPressed.indexOf("stop")!=-1) MK85CPU.flag_halt = true;
-			MK85CPU.cpuctrl |= 0x0400;	// enable CPU clock if key in selected by PP row is pressed
+			MK85CPU.cpuctrl |= 0x0400;	// enable CPU clock if key in selected by PP rows is pressed
 		}
 		MK85CPU.steps = 1;
 		for(var steps = 0; steps < MK85CPU.steps; steps++)
