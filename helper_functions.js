@@ -81,6 +81,11 @@ function parseURLParams(url) {
 /* ---------- */
 
 function loadBinaryHTTP(urlBIN, callback, errCallback) {
+	if (typeof urlBIN.substring == "undefined") urlBIN = urlBIN.toString();
+	if (urlBIN.substring(0,5) != window.location.href.substring(0,5) && window.location.href[4] == "s") {
+		urlBIN = "https" + urlBIN.substring(4)
+	}
+	
 	var oReq = new XMLHttpRequest();
 	oReq.open("GET", urlBIN, true);
 	oReq.responseType = "arraybuffer";
