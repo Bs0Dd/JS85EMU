@@ -23,7 +23,7 @@ window.onload = function() {
 	pagld = true;
 };
 
-var VERVAR = "1.6 - build 21.09.2024"
+var VERVAR = "1.61 - build 16.10.2024"
 
 var supportsVibrate = "vibrate" in navigator;
 
