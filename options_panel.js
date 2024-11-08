@@ -261,10 +261,14 @@ function panelLoadBAS() {
 
                 if (trstr.length == 0) {
                     np++;
+                    LINES.shift();
                     if (np == 2) {
                         break;
                     }
                     continue;
+                }
+                else {
+                    np = 0;
                 }
 
                 var status = bas_parser(PRGBUF, PRGPTR, trstr, prevlin);

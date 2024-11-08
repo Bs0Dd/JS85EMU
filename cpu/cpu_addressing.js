@@ -159,7 +159,7 @@ CPU.prototype.addressingIP = function(operand, isByte) {
 	}
 
 	/* add indirection if req'd */
-	var memPtrFinal = (addrMode==1)?memPtr:(((addrMode&1)==1)?this.access(memPtr, null, false):memPtr);
+	var memPtrFinal = (addrMode==1)?memPtr:(((addrMode&1)==1)?this.access(memPtr&~1, null, false):memPtr);
 
 	result=this.addrMem(memPtrFinal, isByte);
 	result.loc = ((addrMode>1)&&((addrMode&1)==1))?memPtrFinal:memPtr;
