@@ -708,7 +708,7 @@ function debugBreakp() {
         debugClearB();
         return;
     }
-    BREAKPOINT = parseInt(document.getElementById("brkp").value, RAMOCT ? 8 : 16);
+    BREAKPOINT = parseInt(document.getElementById("brkp").value, REGOCT ? 8 : 16);
     if (BREAKPOINT == MK85CPU.reg_u16[7]) {
         SKIPBSTEP = true;
     }

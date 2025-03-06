@@ -269,11 +269,11 @@ function Arguments (i, x) {
             if ((x & 0x80) != 0) {
                 x |= 0xFF00;
             }
-            res = HexOrOct(DISADDR + 2*x, DISOCT);
+            res = HexOrOct((DISADDR + 2*x) & 0xFFFF, DISOCT);
             break;
 
         case PDP11_KINDS.SOB:
-            res = preg(Math.floor(x / 64)) + ',' + HexOrOct((DISADDR - 2*(x & 0x3F)), DISOCT);
+            res = preg(Math.floor(x / 64)) + ',' + HexOrOct((DISADDR - 2*(x & 0x3F)) & 0xFFFF, DISOCT);
             break;
 
         case PDP11_KINDS.MARK:
