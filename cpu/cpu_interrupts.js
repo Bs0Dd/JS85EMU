@@ -1,5 +1,6 @@
 CPU.prototype.execVector = function() {
 	console.log("interrupt addr", this.vector);
+	console.log("SP:", this.reg_u16[6].toString(16), "PC:", this.reg_u16[7].toString(16), "PSW:", this.psw.toString(16));
 	this.vector |= (this.psw&this.flags.H)?(this.sel&0xff00):0;
 	try {
 		/* saving values to stack */
