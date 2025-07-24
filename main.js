@@ -165,6 +165,12 @@ function romlo() {
 	
 		ROM = new Uint8Array(ROM_pol); // Internal ROM image constant (piotr)
 	}
+	else if (NCIMODE) {
+		console.log("Loading internal ROM memory file");
+		romname = "internal (НЦИ ROM v1.3)";
+	
+		ROM = new Uint8Array(ROM_nci); // Internal ROM image constant (НЦИ)
+	}
 	else if(rom == null) {
 		console.log("Loading internal ROM memory file");
 		romname = "internal";
