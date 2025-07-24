@@ -234,6 +234,10 @@ function glueCPU() {
 		if(NCIMODE) {
 			// Banked RAM
 			if((addr>=0xA000)&&(addr<0xC000)) return RAM[0x800+((PP&0x3000)*2)+(addr&0x1FFF)];
+			// КР512ВИ1 RTC
+			if(addr==0xC001) {
+				return RTC.r_data()^0xFF;
+			}
 		}
 		// keyboard column regs
 		return 0xFF;
@@ -266,6 +270,15 @@ function glueCPU() {
 			// Banked RAM
 			if((addr>=0xA000)&&(addr<0xC000)) {
 				RAM[0x800+((PP&0x3000)*2)+(addr&0x1FFF)] = byteVal;
+				return;
+			}
+			// КР512ВИ1 RTC
+			if(addr==0xC000) {
+				RTC.w_addr(byteVal^0xFF);
+				return;
+			}
+			if(addr==0xC001) {
+				RTC.w_data(byteVal^0xFF);
 				return;
 			}
 		}

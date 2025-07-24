@@ -65,6 +65,8 @@ var DEBUG = loadProperty('mk_debugmsg', false, true);
 
 var NCIMODE = loadProperty('mk_ncimode', false, true);
 
+var RTC = NCIMODE ? new KR512VI1() : null;
+
 var PAN = new PANEL();
 
 GUI.appendChild(LCD.svg);
