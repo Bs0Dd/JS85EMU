@@ -223,6 +223,8 @@ function glueCPU() {
 	
 	MK85CPU.readCallback = function (addr) {
 		if((addr&0xfffe)==0x0100) return (keysRead(PP)>>((addr&1)?8:0))&0xff;
+		if((addr&0xfffe)==0x0102) return (PP>>((addr&1)?8:0))&0xff; // for bis/bic RMW
+
 		if((addr<0x8000)&&(addr<romLastAddr)) return ROM[addr];
 		if((addr>=0x8000)&&(addr<ramLastAddr)) return RAM[addr&0x7FFF]; // For any RAM size 
 		// keyboard column regs
