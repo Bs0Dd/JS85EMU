@@ -17,7 +17,11 @@ function loadProperty(propname, defval, convtobool){
 }
 
 function RAMbou() {
-	if (RAM.length > 32768) {  // 32KB max size
+	if ((NCIMODE)&&(RAM.length > 0x8800)) {  // 34KB max size in НЦИ mode
+		RAM = RAM.subarray(0, 0x8800);
+		console.log("Maximum RAM memory size is 34KB, memory area reduced");
+	}
+	else if ((!NCIMODE)&&(RAM.length > 32768)) {  // 32KB max size
 		RAM = RAM.subarray(0, 32768);
 		console.log("Maximum RAM memory size is 32KB, memory area reduced");
 	}
@@ -217,8 +221,8 @@ var PP = 0;	// CPU parallel port for now
 
 // Attach CPU to everything else
 function glueCPU() {
-		
-	var ramLastAddr = 0x8000+RAM.length;
+
+	var ramLastAddr = NCIMODE?0x8800:(0x8000+RAM.length);
 	var romLastAddr = 0x0000+ROM.length;
 	
 	MK85CPU.readCallback = function (addr) {
@@ -227,6 +231,10 @@ function glueCPU() {
 
 		if((addr<0x8000)&&(addr<romLastAddr)) return ROM[addr];
 		if((addr>=0x8000)&&(addr<ramLastAddr)) return RAM[addr&0x7FFF]; // For any RAM size 
+		if(NCIMODE) {
+			// Banked RAM
+			if((addr>=0xA000)&&(addr<0xC000)) return RAM[0x800+((PP&0x3000)*2)+(addr&0x1FFF)];
+		}
 		// keyboard column regs
 		return 0xFF;
 	};
@@ -253,6 +261,13 @@ function glueCPU() {
 		if((addr>=0x8000)&&(addr<ramLastAddr)) { // For any RAM size 
 			RAM[addr&0x7FFF] = byteVal;
 			return;
+		}
+		if(NCIMODE) {
+			// Banked RAM
+			if((addr>=0xA000)&&(addr<0xC000)) {
+				RAM[0x800+((PP&0x3000)*2)+(addr&0x1FFF)] = byteVal;
+				return;
+			}
 		}
 		return;
 	};
