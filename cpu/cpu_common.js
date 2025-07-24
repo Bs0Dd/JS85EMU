@@ -50,9 +50,10 @@ function CPU() {
 }
 
 CPU.prototype.access = function(addr,writeVal,isByte) {
-	if(!isByte && addr&1) {
-		throw this.vectors.TRAP_BUS_ERROR;	// bus error: attempt to read word from odd address
-	} // TRAP 4
+	// MK-85 CPU ignores this, НЦИ ROM utilizes this fact
+	//if(!isByte && addr&1) {
+		//throw this.vectors.TRAP_BUS_ERROR;	// bus error: attempt to read word from odd address
+	//} // TRAP 4
 
 	if(writeVal === null) {
 		switch(addr) {
@@ -60,7 +61,13 @@ CPU.prototype.access = function(addr,writeVal,isByte) {
 			case 0x0105: {
 				return (this.cpuctrl>>((addr&1)?8:0))&(isByte?0xff:0xffff);
 			}
-			default: return this.readCallback(addr)|(isByte?0:this.readCallback(addr+1)<<8);
+			default: {
+				if(isByte) {
+					return this.readCallback(addr);
+				} else {
+					return this.readCallback(addr&0xFFFE)|(this.readCallback(addr|1)<<8);
+				}
+			}
 		}
 	} else {
 		switch(addr) {
@@ -71,8 +78,12 @@ CPU.prototype.access = function(addr,writeVal,isByte) {
 				return null;
 			}
 			default: {
-				this.writeCallback(addr,writeVal&0xFF);
-				if(!isByte) this.writeCallback(addr+1,(writeVal>>8)&0xFF);
+				if(isByte) {
+					this.writeCallback(addr,writeVal&0xFF);
+				} else {
+					this.writeCallback(addr&0xFFFE,writeVal&0xFF);
+					this.writeCallback(addr|1,(writeVal>>8)&0xFF);
+				}
 				return null;
 			}
 		}
