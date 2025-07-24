@@ -63,6 +63,8 @@ var usePlRom = loadProperty('mk_polrom', false, true);
 
 var DEBUG = loadProperty('mk_debugmsg', false, true);
 
+var NCIMODE = loadProperty('mk_ncimode', false, true);
+
 var PAN = new PANEL();
 
 GUI.appendChild(LCD.svg);
@@ -227,6 +229,7 @@ document.addEventListener("visibilitychange", () => {
 		window.localStorage.setItem('mk_ram', btoa(String.fromCharCode.apply(null, RAM)));
 		window.localStorage.setItem('mk_overlay', document.getElementById("lay").checked);
 		window.localStorage.setItem('mk_autoinit', document.getElementById("aini").checked);
+		window.localStorage.setItem('mk_ncimode', document.getElementById("nci").checked);
 	}
 	else if (POWER && !PAUSE_ON_HID){
 		panelSwState(false);

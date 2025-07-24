@@ -37,6 +37,7 @@ function PANEL() {
     var ovl = (loadProperty('mk_overlay', false, true)) ? "checked" : "";
     var init = (loadProperty('mk_autoinit', true, true)) ? "checked" : "";
     var fi32 = (loadProperty('mk_32kfix', true, true)) ? "checked" : "";
+    var ncimode = NCIMODE ? "checked" : "";
 
     var ign = ignoreFreqDiv ? "checked" : "";
     var ignp = ignorePowerOff ? "checked" : "";
@@ -59,7 +60,8 @@ function PANEL() {
         tabcont[0][1] += `| <label for="vib">Vibro (keys):</label> <input type="checkbox" onChange="panelSwVibro()" id="vib" name="vib" ${vib}>`;
     }
 
-    tabcont[1][0] = `RAM size: <span id="csz"></span>KB<br>
+    tabcont[1][0] = `<label for="nci">НЦИ mode (banked RAM, RTC):</label> <input type="checkbox" id="nci" onChange="panelUpdNSz()" name="nci" ${ncimode}><br>
+			RAM size: <span id="csz"></span>KB<br>
             <input type="range" id="msiz" onChange="panelUpdNSz()" name="msiz" min="2" max="32" step="2"/>
             <button onClick="panelNewMem()">Set size</button><br>
             New size: <span id="nsz"></span>KB<br>
@@ -944,10 +946,19 @@ function panelSwState(stat) {
 }
 
 function panelUpdNSz() {
-    var msiz = document.getElementById("msiz").value
-    document.getElementById("nsz").innerText = msiz;
-    document.getElementById("32fi").disabled =
-        ((document.getElementById("aini").checked != true) || (msiz < 32)) ? true : false;
+	if (document.getElementById("nci").checked==true) {
+		document.getElementById("msiz").value = 34;
+    	document.getElementById("nsz").innerText = 34;
+		document.getElementById("msiz").disabled = true;
+		document.getElementById("32fi").disabled = true;
+	}
+	else {
+		document.getElementById("msiz").disabled = false;
+    	var msiz = document.getElementById("msiz").value
+	    document.getElementById("nsz").innerText = msiz;
+    	document.getElementById("32fi").disabled =
+        	((document.getElementById("aini").checked != true) || (msiz < 32)) ? true : false;
+	}
 }
 
 function panelNewMem(){
