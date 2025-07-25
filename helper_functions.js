@@ -273,11 +273,11 @@ function glueCPU() {
 				return;
 			}
 			// КР512ВИ1 RTC
-			if(addr==0xC000) {
+			if((PP&0x800)&&(addr==0xC000)) {
 				RTC.w_addr(byteVal^0xFF);
 				return;
 			}
-			if(addr==0xC001) {
+			if((PP&0x800)&&(addr==0xC001)) {
 				RTC.w_data(byteVal^0xFF);
 				return;
 			}
