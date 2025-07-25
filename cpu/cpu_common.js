@@ -61,13 +61,7 @@ CPU.prototype.access = function(addr,writeVal,isByte) {
 			case 0x0105: {
 				return (this.cpuctrl>>((addr&1)?8:0))&(isByte?0xff:0xffff);
 			}
-			default: {
-				if(isByte) {
-					return this.readCallback(addr);
-				} else {
-					return this.readCallback(addr&0xFFFE)|(this.readCallback(addr|1)<<8);
-				}
-			}
+			default: return this.readCallback(addr)|(isByte?0:this.readCallback(addr+1)<<8);
 		}
 	} else {
 		switch(addr) {
@@ -78,12 +72,8 @@ CPU.prototype.access = function(addr,writeVal,isByte) {
 				return null;
 			}
 			default: {
-				if(isByte) {
-					this.writeCallback(addr,writeVal&0xFF);
-				} else {
-					this.writeCallback(addr&0xFFFE,writeVal&0xFF);
-					this.writeCallback(addr|1,(writeVal>>8)&0xFF);
-				}
+				this.writeCallback(addr,writeVal&0xFF);
+				if(!isByte) this.writeCallback(addr+1,(writeVal>>8)&0xFF);
 				return null;
 			}
 		}
