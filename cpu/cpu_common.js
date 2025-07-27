@@ -50,9 +50,13 @@ function CPU() {
 }
 
 CPU.prototype.access = function(addr,writeVal,isByte) {
+	// if(!isByte && addr&1) {
+	// 	throw this.vectors.TRAP_BUS_ERROR;	// bus error: attempt to read word from odd address
+	// } // TRAP 4
+	// LSI-11 compatible processor (VM2 core) allows to read word from odd address (just ignores bit 0).
 	if(!isByte && addr&1) {
-		throw this.vectors.TRAP_BUS_ERROR;	// bus error: attempt to read word from odd address
-	} // TRAP 4
+		addr--;
+	}
 
 	if(writeVal === null) {
 		switch(addr) {

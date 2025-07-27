@@ -24,7 +24,7 @@
 <table style="font-size:18px;font-weight:bold;text-align:center;margin-left: auto;margin-right: auto;">
     <tr><td colspan="2" td style="padding-bottom:20px;">
     GitHub: <a href="https://github.com/Bs0Dd/JS85EMU" target="_blank">JS85EMU</a><br>
-    <span style="font-size:13px;">2024 © Compys S&N Software</span>
+    <span style="font-size:13px;">2024, 2025 © Compys S&N Systems</span>
     </td></tr>
     <tr><td style="padding-right:20px;">Based on <a href="https://github.com/KP1533TM2/js-mk85" target="_blank">js-mk85</a> emulator<br>
     <span style="font-size:13px;">2016 © Alexei Gordeev a.k.a. KP1533TM2</span></td>
@@ -38,6 +38,21 @@
 
 <h2>Changelog</h2>
 
+<div style="text-align: left;">
+    <b>-> Version 1.64 - 27.07.2025</b>
+</div>
+    <ul style="text-align: left;">
+        <li>The emulator processor no longer calls vector 04 (BUS ERROR) when accessing a word<br>
+            at an odd address. According to the real MK85 and the LSI-11 specification (on which<br>
+            the 1801VM2 core is based), the processor in such a case ignores the A0 bit (the least<br>
+            significant bit of the address), performing alignment to an even address.</li>
+        <li>Fixed errors of import and export of "incorrect" BASIC programs.<br>
+            Necessary for loading machine programs in the form of a BASIC listing.<br>
+            Read more <a href="http://mk.bs0dd.net/piotr433/mk85mc1e.htm" target="_blank">here</a>.</li>
+        <li>It's been one year since I started working on JS**EMU projects!</li>
+    </ul>
+
+<br>
 <div style="text-align: left;">
     <b>-> Version 1.62 - 06.03.2025</b>
 </div>

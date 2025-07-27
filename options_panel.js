@@ -360,7 +360,8 @@ function panelGetBAS() {
     var b2;
     var offset = 0x026B;
     var quot = false;
-    var comm = false; 
+    var comm = false;
+    var numm = false;
 
     for (let p = 0; p<10; p++) {
         if (prsta < bprogst[p]) {
@@ -385,6 +386,7 @@ function panelGetBAS() {
                 resf+="\n";
                 quot = false;
                 comm = false;
+                numm = false;
                 ps = 0;	/* line number expected */
             }
             else if (b1 == 0x5C && (!(quot || comm)))
@@ -399,15 +401,19 @@ function panelGetBAS() {
             {
                 resf+="<=";        
             }
-            else if (b1 == 0x7B && (!(quot || comm)))
+            else if (b1 == 0x7B && (!(quot || comm)) && numm)
             {
                 resf+="E";
+            }
+            else if (b1 == 0x7B)
+            {
+                resf+="ᵉ";
             }
             else if (b1 == 0x7C && (!(quot || comm)))
             {
                 resf+="PI";
             }
-            else if (b1 == 0x7D && (!(quot || comm)))
+            else if (b1 == 0x7D && (!(quot || comm)) && numm)
             {
                 resf+="E-";
             }
@@ -465,6 +471,7 @@ function panelGetBAS() {
             }
             break;
         }
+        isdigit = ((b1 >= 0x30) && (b1 <= 0x39));
         offset++;
         prsta++;
         }
