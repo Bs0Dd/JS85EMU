@@ -495,7 +495,7 @@ function bas_parser(BUF, PTR, LINE, PREVN) {
             lptr++;
           }
           else {
-            var char = conv_char(LINE[lptr].toUpperCase()+LINE[lptr+1]);
+            var char = conv_char(LINE[lptr]+LINE[lptr+1]);
             if (char < 0) {
               return "CHARPAR: invalid character, position "+lptr;
             }
