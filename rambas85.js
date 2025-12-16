@@ -7,7 +7,7 @@
 
 /* character codes 0x00 to 0xBF, tilde marks unprintable characters, "|" marks >0xFFFF unicode characters */
 var CCODES =
-`~||||||{}Ø…○∑°△_\
+`~◣◢◥◤||{}Ø…○∑°△_\
 ×÷♠♥♦♣μΩ↓←→¥□·Ъъ\
  !"#$%&'()*+,-./\
 0123456789:;<=>?\
@@ -20,7 +20,7 @@ pqrstuvwxyzᵉπ⁻≥█\
 ЮАБЦДЕФГХИЙКЛМНО\
 ПЯРСТУЖВЬЫЗШЭЩЧЁ`;
 
-var SUCODES = ["🮟", "🮞", "🮝", "🮜", "🮚", "🮛"]
+var SUCODES = ["🮚", "🮛"]
 
 var TOKENS = [
 	"SIN ",		"COS ",		"TAN ",		"ASN ",
@@ -288,7 +288,7 @@ function sv2str (offset, maxlen) {
               result+= '\x22';
               quot = 1;
             }
-            result+= SUCODES[c-1];
+            result+= SUCODES[c-5];
           }
   
   /* printable character? */
@@ -376,7 +376,7 @@ function conv_char(chr) {
 
   for (let i=0; i < SUCODES.length; i++) { // >0xFFFF characters
     if (chr == SUCODES[i]) {
-      return i+1;
+      return i+5;
     }
   }
 
@@ -442,7 +442,7 @@ function bas_parser(BUF, PTR, LINE, PREVN) {
           if (char < 0) {
             return "CHARPAR: invalid character, position "+lptr;
           }
-          if ((char >= 1) && (char <= 6)) {
+          if ((char == 5) || (char == 6)) {
             lptr++;
           }
           BUF[PTR++] = char;
@@ -499,7 +499,7 @@ function bas_parser(BUF, PTR, LINE, PREVN) {
             if (char < 0) {
               return "CHARPAR: invalid character, position "+lptr;
             }
-            if ((char >= 1) && (char <= 6)) {
+            if ((char == 5) || (char == 6)) {
               lptr++;
             }
           }

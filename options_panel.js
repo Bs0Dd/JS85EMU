@@ -455,7 +455,7 @@ function panelGetBAS() {
             }
             else if ((b1 < 0xC0) && (CCODES[b1] == "|"))
             {
-                resf+=SUCODES[b1-1];
+                resf+=SUCODES[b1-5];
             }
             else if (b1 < 0xC0)
             {
